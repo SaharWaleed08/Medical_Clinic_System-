@@ -1,6 +1,6 @@
 package com.project.medical_clinic_system.dto.request;
 
-import jakarta.persistence.Column;
+
 
 import java.math.BigDecimal;
 

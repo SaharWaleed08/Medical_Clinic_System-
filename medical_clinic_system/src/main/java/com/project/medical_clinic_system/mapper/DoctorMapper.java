@@ -1,7 +1,6 @@
 package com.project.medical_clinic_system.mapper;
 
 import com.project.medical_clinic_system.dto.response.DoctorResponse;
-import com.project.medical_clinic_system.dto.response.PatientResponse;
 import com.project.medical_clinic_system.model.Doctor;
 
 import java.util.ArrayList;

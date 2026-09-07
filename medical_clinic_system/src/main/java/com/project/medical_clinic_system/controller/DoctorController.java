@@ -3,7 +3,6 @@ package com.project.medical_clinic_system.controller;
 import com.project.medical_clinic_system.dto.request.CreateDoctorRequest;
 import com.project.medical_clinic_system.dto.request.CreatePatientRequest;
 import com.project.medical_clinic_system.dto.response.DoctorResponse;
-import com.project.medical_clinic_system.dto.response.PatientResponse;
 import com.project.medical_clinic_system.service.DoctorService;
 import org.springframework.web.bind.annotation.*;
 

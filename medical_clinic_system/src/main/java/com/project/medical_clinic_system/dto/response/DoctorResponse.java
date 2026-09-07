@@ -1,5 +1,5 @@
 package com.project.medical_clinic_system.dto.response;
-
+import com.project.medical_clinic_system.dto.request.CreatePatientRequest;
 import java.util.UUID;
 
 public class DoctorResponse {
