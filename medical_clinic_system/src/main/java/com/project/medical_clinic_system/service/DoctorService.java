@@ -5,8 +5,6 @@ import com.project.medical_clinic_system.dto.response.DoctorResponse;
 import com.project.medical_clinic_system.mapper.DoctorMapper;
 import com.project.medical_clinic_system.model.Doctor;
 import com.project.medical_clinic_system.repository.DoctorRepository;
-import com.project.medical_clinic_system.dto.request.CreatePatientRequest;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

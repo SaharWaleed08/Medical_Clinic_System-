@@ -62,7 +62,7 @@ public class PatientService {
         throw new RuntimeException("Patient not found");
     }
 
-    public String deleteByID(UUID patientID) {
+    public String deletePatientByID(UUID patientID) {
         patientRepository.deleteById(patientID);
         return "Patient is deleted";
     }

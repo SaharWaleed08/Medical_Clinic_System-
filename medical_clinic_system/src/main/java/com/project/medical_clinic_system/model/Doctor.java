@@ -1,7 +1,7 @@
 package com.project.medical_clinic_system.model;
 
 import jakarta.persistence.*;
-import com.project.medical_clinic_system.dto.request.CreatePatientRequest;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
