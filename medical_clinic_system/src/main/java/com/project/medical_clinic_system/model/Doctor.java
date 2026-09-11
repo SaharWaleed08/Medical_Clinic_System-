@@ -1,10 +1,14 @@
 package com.project.medical_clinic_system.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "doctors")
 public class Doctor {
@@ -19,9 +23,9 @@ public class Doctor {
     private String password;
     @Column(name = "phone", nullable = false)
     private String phone;
-    @Column(name = "license_number",nullable = false)
+    @Column(name = "license_number", nullable = false)
     private String licenseNumber;
-    @Column(name = "years_of_experience",nullable = false)
+    @Column(name = "years_of_experience", nullable = false)
     private Integer yearsOfExperience;
     @Column(name = "consultation_fee")
     private BigDecimal consultationFee;

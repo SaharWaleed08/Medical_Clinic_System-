@@ -34,28 +34,8 @@ public class DoctorService {
     }
 
     public DoctorResponse updateDoctorByID(UUID doctorID, CreateDoctorRequest request) {
-
-        boolean existingDoctor = doctorRepository.existsById(doctorID);
-
-        if (existingDoctor) {
-
-            Optional<Doctor> doctor = doctorRepository.findById(doctorID);
-
-            if (doctor.isPresent()) {
-
-                Doctor existingDoctorData = doctor.get();
-
-                existingDoctorData.setName(request.getName());
-                existingDoctorData.setEmail(request.getEmail());
-                existingDoctorData.setPhone(request.getPhone());
-
-                Optional<Doctor> updatedDoctor = doctorRepository.save(existingDoctorData);
-
-                return doctorMapper.toResponse(updatedDoctor);
-            }
-        }
-
-        throw new RuntimeException("Doctor not found");
+        Optional<Doctor> doctor=doctorRepository.updateById(doctorID,request);
+        return doctorMapper.toResponse(doctor);
     }
 
     public String deleteDoctorByID(UUID doctorID) {
