@@ -2,6 +2,7 @@ package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreatePatientRequest;
 import com.project.medical_clinic_system.dto.response.PatientResponse;
+import com.project.medical_clinic_system.model.Doctor;
 import com.project.medical_clinic_system.model.Patient;
 import com.project.medical_clinic_system.mapper.PatientMapper;
 import com.project.medical_clinic_system.repository.PatientRepository;
@@ -38,28 +39,8 @@ public class PatientService {
     }
 
     public PatientResponse updatePatientByID(UUID patientID, CreatePatientRequest request) {
-
-        boolean existingPatient = patientRepository.existsById(patientID);
-
-        if (existingPatient) {
-
-            Optional<Patient> patient = patientRepository.findById(patientID);
-
-            if (patient.isPresent()) {
-
-                Patient existingPatientData = patient.get();
-
-                existingPatientData.setName(request.getName());
-                existingPatientData.setEmail(request.getEmail());
-                existingPatientData.setPhone(request.getPhone());
-
-                Optional<Patient> updatedPatient = patientRepository.save(existingPatientData);
-
-                return patientMapper.toResponse(updatedPatient);
-            }
-        }
-
-        throw new RuntimeException("Patient not found");
+        Optional<Patient> patient=patientRepository.updateById(patientID,request);
+        return patientMapper.toResponse(patient);
     }
 
     public String deletePatientByID(UUID patientID) {

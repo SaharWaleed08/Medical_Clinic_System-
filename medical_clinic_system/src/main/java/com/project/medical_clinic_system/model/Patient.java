@@ -1,11 +1,15 @@
 package com.project.medical_clinic_system.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "patients")
 public class Patient {
@@ -16,7 +20,7 @@ public class Patient {
     private String name;
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-    @Column(name = "password",nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
     @Column(name = "phone", nullable = false, unique = true)
     private String phone;
