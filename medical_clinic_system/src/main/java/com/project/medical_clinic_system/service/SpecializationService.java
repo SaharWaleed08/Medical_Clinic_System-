@@ -6,7 +6,6 @@ import com.project.medical_clinic_system.mapper.SpecializationMapper;
 import com.project.medical_clinic_system.model.Specialization;
 import com.project.medical_clinic_system.repository.SpecializationRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,28 +37,8 @@ public class SpecializationService {
     }
 
     public SpecializationResponse updateSpecializationByID(UUID specializationID, CreateSpecializationRequest request) {
-
-        boolean existingSpecialization = specializationRepository.existsById(specializationID);
-
-        if (existingSpecialization) {
-
-            Optional<Specialization> specialization = specializationRepository.findById(specializationID);
-
-            if (specialization.isPresent()) {
-
-                Specialization existingSpecializationData = specialization.get();
-
-                existingSpecializationData.setName(request.getName());
-                existingSpecializationData.setDescription(request.getDescription());
-
-
-                Optional<Specialization> updatedSpecialization = specializationRepository.save(existingSpecializationData);
-
-                return specializationMapper.toResponse(updatedSpecialization);
-            }
-        }
-
-        throw new RuntimeException("Specialization not found");
+        Optional<Specialization> specialization=specializationRepository.updateById(specializationID,request);
+        return specializationMapper.toResponse(specialization);
     }
 
     public String deleteSpecializationByID(UUID specializationID) {
