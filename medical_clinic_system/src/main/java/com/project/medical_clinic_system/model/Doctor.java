@@ -49,7 +49,6 @@ public class Doctor {
     public Doctor(String name, String email, String password, String phone,
                   String licenseNumber, Integer yearsOfExperience,
                   BigDecimal consultationFee) {
-        this.doctorID = UUID.randomUUID();
         this.name = name;
         this.email = email;
         this.password = password;
