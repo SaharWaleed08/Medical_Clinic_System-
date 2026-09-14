@@ -18,7 +18,8 @@ public class AppointmentMapper {
                 appointment.get().getDoctor().getDoctorID(),
                 appointment.get().getDoctor().getName(),
                 appointment.get().getAppointmentDateTime(),
-                appointment.get().getReasonForVisit()
+                appointment.get().getReasonForVisit(),
+                appointment.get().getStatus()
         );
     }
 }

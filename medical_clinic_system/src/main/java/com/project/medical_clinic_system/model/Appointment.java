@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import com.project.medical_clinic_system.enums.AppointmentStatus;
 
 @Entity
 @Table(name = "appointments")
@@ -27,6 +28,10 @@ public class Appointment {
     @Column(name = "reason_for_visit")
     private String reasonForVisit;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AppointmentStatus status;
+
     public Appointment() {
     }
 
@@ -37,6 +42,7 @@ public class Appointment {
         this.doctor = doctor;
         this.appointmentDateTime = appointmentDateTime;
         this.reasonForVisit = reasonForVisit;
+        this.status = AppointmentStatus.PENDING;
     }
 
     public UUID getId() {
@@ -77,5 +83,13 @@ public class Appointment {
 
     public void setReasonForVisit(String reasonForVisit) {
         this.reasonForVisit = reasonForVisit;
+    }
+
+    public AppointmentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AppointmentStatus status) {
+        this.status = status;
     }
 }

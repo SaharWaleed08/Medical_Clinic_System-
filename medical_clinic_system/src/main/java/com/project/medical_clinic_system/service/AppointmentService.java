@@ -2,6 +2,7 @@ package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreateAppointmentRequest;
 import com.project.medical_clinic_system.dto.response.AppointmentResponse;
+import com.project.medical_clinic_system.enums.AppointmentStatus;
 import com.project.medical_clinic_system.mapper.AppointmentMapper;
 import com.project.medical_clinic_system.model.Appointment;
 import com.project.medical_clinic_system.model.Availability;
@@ -79,6 +80,7 @@ public class AppointmentService {
         if (!available) {
             throw new RuntimeException("Doctor is not available at this time");
         }
+
         boolean doctorHasConflict =
                 appointmentRepository.existsByDoctorDoctorIDAndAppointmentDateTime(
                         doctor.get().getDoctorID(),
@@ -116,5 +118,64 @@ public class AppointmentService {
         Optional<Appointment> appointment = appointmentRepository.findById(id);
 
         return appointmentMapper.toResponse(appointment);
+    }
+
+    public List<AppointmentResponse> findAllAppointments() {
+
+        List<Appointment> appointments = appointmentRepository.findAll();
+
+        return appointments.stream()
+                .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
+                .toList();
+    }
+
+    public List<AppointmentResponse> findPatientAppointments(UUID patientID) {
+
+        if (patientRepository.findById(patientID).isEmpty()) {
+            throw new RuntimeException("Patient not found");
+        }
+
+        List<Appointment> appointments =
+                appointmentRepository.findByPatientPatientID(patientID);
+
+        return appointments.stream()
+                .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
+                .toList();
+    }
+
+    public List<AppointmentResponse> findDoctorAppointments(UUID doctorID) {
+
+        if (doctorRepository.findById(doctorID).isEmpty()) {
+            throw new RuntimeException("Doctor not found");
+        }
+
+        List<Appointment> appointments =
+                appointmentRepository.findByDoctorDoctorID(doctorID);
+
+        return appointments.stream()
+                .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
+                .toList();
+    }
+
+    public List<AppointmentResponse> findAppointmentsByStatus(AppointmentStatus status) {
+
+        List<Appointment> appointments =
+                appointmentRepository.findByStatus(status);
+
+        return appointments.stream()
+                .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
+                .toList();
+    }
+
+    public List<AppointmentResponse> findAppointmentsByDate(
+            LocalDateTime start,
+            LocalDateTime end) {
+
+        List<Appointment> appointments =
+                appointmentRepository.findByAppointmentDateTimeBetween(start, end);
+
+        return appointments.stream()
+                .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
+                .toList();
     }
 }

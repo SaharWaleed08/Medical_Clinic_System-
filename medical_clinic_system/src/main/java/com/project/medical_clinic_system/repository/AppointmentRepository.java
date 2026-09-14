@@ -1,10 +1,12 @@
 package com.project.medical_clinic_system.repository;
 
+import com.project.medical_clinic_system.enums.AppointmentStatus;
 import com.project.medical_clinic_system.model.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -18,5 +20,16 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     boolean existsByPatientPatientIDAndAppointmentDateTime(
             UUID patientID,
             LocalDateTime appointmentDateTime
+    );
+
+    List<Appointment> findByPatientPatientID(UUID patientID);
+
+    List<Appointment> findByDoctorDoctorID(UUID doctorID);
+
+    List<Appointment> findByStatus(AppointmentStatus status);
+
+    List<Appointment> findByAppointmentDateTimeBetween(
+            LocalDateTime start,
+            LocalDateTime end
     );
 }

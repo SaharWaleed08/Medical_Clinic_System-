@@ -1,5 +1,7 @@
 package com.project.medical_clinic_system.dto.response;
 
+import com.project.medical_clinic_system.enums.AppointmentStatus;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -12,6 +14,7 @@ public class AppointmentResponse {
     private String doctorName;
     private LocalDateTime appointmentDateTime;
     private String reasonForVisit;
+    private AppointmentStatus status;
 
     public AppointmentResponse() {
     }
@@ -19,7 +22,8 @@ public class AppointmentResponse {
     public AppointmentResponse(UUID id, UUID patientID, String patientName,
                                UUID doctorID, String doctorName,
                                LocalDateTime appointmentDateTime,
-                               String reasonForVisit) {
+                               String reasonForVisit,
+                               AppointmentStatus status) {
         this.id = id;
         this.patientID = patientID;
         this.patientName = patientName;
@@ -27,6 +31,7 @@ public class AppointmentResponse {
         this.doctorName = doctorName;
         this.appointmentDateTime = appointmentDateTime;
         this.reasonForVisit = reasonForVisit;
+        this.status = status;
     }
 
     public UUID getId() {
@@ -83,5 +88,13 @@ public class AppointmentResponse {
 
     public void setReasonForVisit(String reasonForVisit) {
         this.reasonForVisit = reasonForVisit;
+    }
+
+    public AppointmentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AppointmentStatus status) {
+        this.status = status;
     }
 }
