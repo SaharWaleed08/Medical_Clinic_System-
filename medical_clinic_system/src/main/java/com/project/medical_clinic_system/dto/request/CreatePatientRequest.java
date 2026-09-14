@@ -1,6 +1,6 @@
 package com.project.medical_clinic_system.dto.request;
 
-import com.project.medical_clinic_system.model.Gender;
+import com.project.medical_clinic_system.enums.Gender;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

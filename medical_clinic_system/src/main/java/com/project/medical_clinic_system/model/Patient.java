@@ -1,5 +1,6 @@
 package com.project.medical_clinic_system.model;
 
+import com.project.medical_clinic_system.enums.Gender;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
