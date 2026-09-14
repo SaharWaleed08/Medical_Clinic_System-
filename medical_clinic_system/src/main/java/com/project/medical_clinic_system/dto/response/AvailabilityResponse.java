@@ -5,18 +5,30 @@ import java.time.LocalTime;
 import java.util.UUID;
 
 public class AvailabilityResponse {
+
+    private UUID availabilityID;
     private UUID doctorID;
     private String name;
     private DayOfWeek day;
     private LocalTime startTime;
     private LocalTime endTime;
 
-    public AvailabilityResponse(UUID doctorID, String name, DayOfWeek day, LocalTime startTime, LocalTime endTime) {
+    public AvailabilityResponse(UUID availabilityID, UUID doctorID, String name,
+                                DayOfWeek day, LocalTime startTime, LocalTime endTime) {
+        this.availabilityID = availabilityID;
         this.doctorID = doctorID;
         this.name = name;
         this.day = day;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public UUID getAvailabilityID() {
+        return availabilityID;
+    }
+
+    public void setAvailabilityID(UUID availabilityID) {
+        this.availabilityID = availabilityID;
     }
 
     public UUID getDoctorID() {

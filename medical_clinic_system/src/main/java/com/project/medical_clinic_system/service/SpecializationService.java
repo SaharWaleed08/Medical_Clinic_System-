@@ -37,8 +37,16 @@ public class SpecializationService {
     }
 
     public SpecializationResponse updateSpecializationByID(UUID specializationID, CreateSpecializationRequest request) {
-        Optional<Specialization> specialization=specializationRepository.updateById(specializationID,request);
-        return specializationMapper.toResponse(specialization);
+        Optional<Specialization> specialization = specializationRepository.findById(specializationID);
+
+        Specialization existingSpecialization = specialization.get();
+
+        existingSpecialization.setName(request.getName());
+        existingSpecialization.setDescription(request.getDescription());
+
+        specializationRepository.save(existingSpecialization);
+
+        return specializationMapper.toResponse(Optional.of(existingSpecialization));
     }
 
     public String deleteSpecializationByID(UUID specializationID) {

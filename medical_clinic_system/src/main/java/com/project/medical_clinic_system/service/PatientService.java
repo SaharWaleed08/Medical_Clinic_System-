@@ -39,8 +39,21 @@ public class PatientService {
     }
 
     public PatientResponse updatePatientByID(UUID patientID, CreatePatientRequest request) {
-        Optional<Patient> patient=patientRepository.updateById(patientID,request);
-        return patientMapper.toResponse(patient);
+        Optional<Patient> patient = patientRepository.findById(patientID);
+
+        Patient existingPatient = patient.get();
+
+        existingPatient.setName(request.getName());
+        existingPatient.setEmail(request.getEmail());
+        existingPatient.setPassword(request.getPassword());
+        existingPatient.setPhone(request.getPhone());
+        existingPatient.setDateOfBirth(request.getDateOfBirth());
+        existingPatient.setGender(request.getGender());
+        existingPatient.setRegistrationDate(request.getRegistrationDate());
+
+        patientRepository.save(existingPatient);
+
+        return patientMapper.toResponse(Optional.of(existingPatient));
     }
 
     public String deletePatientByID(UUID patientID) {

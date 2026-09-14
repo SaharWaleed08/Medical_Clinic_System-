@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Setter
@@ -12,29 +13,42 @@ import java.util.UUID;
 @Entity
 @Table(name = "doctors")
 public class Doctor {
+
     @Id
     @GeneratedValue
     private UUID doctorID;
+
     @Column(name = "doctor_name", nullable = false)
     private String name;
+
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+
     @Column(name = "password", nullable = false)
     private String password;
+
     @Column(name = "phone", nullable = false)
     private String phone;
+
     @Column(name = "license_number", nullable = false)
     private String licenseNumber;
+
     @Column(name = "years_of_experience", nullable = false)
     private Integer yearsOfExperience;
+
     @Column(name = "consultation_fee")
     private BigDecimal consultationFee;
+
+    @OneToMany(mappedBy = "doctor")
+    private List<Availability> availabilities;
 
     public Doctor() {
 
     }
 
-    public Doctor(String name, String email, String password, String phone, String licenseNumber, Integer yearsOfExperience, BigDecimal consultationFee) {
+    public Doctor(String name, String email, String password, String phone,
+                  String licenseNumber, Integer yearsOfExperience,
+                  BigDecimal consultationFee) {
         this.doctorID = UUID.randomUUID();
         this.name = name;
         this.email = email;

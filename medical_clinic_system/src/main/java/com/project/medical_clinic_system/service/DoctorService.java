@@ -38,8 +38,21 @@ public class DoctorService {
     }
 
     public DoctorResponse updateDoctorByID(UUID doctorID, CreateDoctorRequest request) {
-        Optional<Doctor> doctor = doctorRepository.updateById(doctorID, request);
-        return doctorMapper.toResponse(doctor);
+        Optional<Doctor> doctor = doctorRepository.findById(doctorID);
+
+        Doctor existingDoctor = doctor.get();
+
+        existingDoctor.setName(request.getName());
+        existingDoctor.setEmail(request.getEmail());
+        existingDoctor.setPassword(request.getPassword());
+        existingDoctor.setPhone(request.getPhone());
+        existingDoctor.setLicenseNumber(request.getLicenseNumber());
+        existingDoctor.setYearsOfExperience(request.getYearsOfExperience());
+        existingDoctor.setConsultationFee(request.getConsultationFee());
+
+        doctorRepository.save(existingDoctor);
+
+        return doctorMapper.toResponse(Optional.of(existingDoctor));
     }
 
     public String deleteDoctorByID(UUID doctorID) {
