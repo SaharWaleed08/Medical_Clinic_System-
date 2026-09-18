@@ -10,6 +10,9 @@ public class CreateAvailabilityRequest {
     private LocalTime startTime;
     private LocalTime endTime;
 
+    public CreateAvailabilityRequest() {
+    }
+
     public CreateAvailabilityRequest(UUID doctorID, DayOfWeek day, LocalTime startTime, LocalTime endTime) {
         this.doctorID = doctorID;
         this.day = day;

@@ -13,6 +13,9 @@ public class CreateDoctorRequest {
     private Integer yearsOfExperience;
     private BigDecimal consultationFee;
 
+    public CreateDoctorRequest() {
+    }
+
     public CreateDoctorRequest(String name, String email, String password, String phone, String licenseNumber, Integer yearsOfExperience, BigDecimal consultationFee) {
         this.name = name;
         this.email = email;

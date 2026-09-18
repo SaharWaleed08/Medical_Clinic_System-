@@ -178,4 +178,81 @@ public class AppointmentService {
                 .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
                 .toList();
     }
+
+    public AppointmentResponse confirmAppointment(UUID id) {
+
+        Optional<Appointment> appointment = appointmentRepository.findById(id);
+
+        if (appointment.isEmpty()) {
+            throw new RuntimeException("Appointment not found");
+        }
+
+        if (appointment.get().getStatus() != AppointmentStatus.PENDING) {
+            throw new RuntimeException("Appointment cannot be confirmed");
+        }
+
+        appointment.get().setStatus(AppointmentStatus.CONFIRMED);
+
+        appointmentRepository.save(appointment.get());
+
+        return appointmentMapper.toResponse(appointment);
+    }
+
+    public AppointmentResponse cancelAppointment(UUID id) {
+
+        Optional<Appointment> appointment = appointmentRepository.findById(id);
+
+        if (appointment.isEmpty()) {
+            throw new RuntimeException("Appointment not found");
+        }
+
+        if (appointment.get().getStatus() != AppointmentStatus.PENDING
+                && appointment.get().getStatus() != AppointmentStatus.CONFIRMED) {
+            throw new RuntimeException("Appointment cannot be cancelled");
+        }
+
+        appointment.get().setStatus(AppointmentStatus.CANCELLED);
+
+        appointmentRepository.save(appointment.get());
+
+        return appointmentMapper.toResponse(appointment);
+    }
+
+    public AppointmentResponse completeAppointment(UUID id) {
+
+        Optional<Appointment> appointment = appointmentRepository.findById(id);
+
+        if (appointment.isEmpty()) {
+            throw new RuntimeException("Appointment not found");
+        }
+
+        if (appointment.get().getStatus() != AppointmentStatus.CONFIRMED) {
+            throw new RuntimeException("Appointment cannot be completed");
+        }
+
+        appointment.get().setStatus(AppointmentStatus.COMPLETED);
+
+        appointmentRepository.save(appointment.get());
+
+        return appointmentMapper.toResponse(appointment);
+    }
+
+    public AppointmentResponse markAppointmentAsNoShow(UUID id) {
+
+        Optional<Appointment> appointment = appointmentRepository.findById(id);
+
+        if (appointment.isEmpty()) {
+            throw new RuntimeException("Appointment not found");
+        }
+
+        if (appointment.get().getStatus() != AppointmentStatus.CONFIRMED) {
+            throw new RuntimeException("Appointment cannot be marked as no-show");
+        }
+
+        appointment.get().setStatus(AppointmentStatus.NO_SHOW);
+
+        appointmentRepository.save(appointment.get());
+
+        return appointmentMapper.toResponse(appointment);
+    }
 }

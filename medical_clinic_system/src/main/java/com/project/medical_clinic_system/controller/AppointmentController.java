@@ -50,4 +50,32 @@ public class AppointmentController {
 
         return appointmentService.findAppointmentByID(id);
     }
+
+    @PatchMapping("/{id}/confirm")
+    public AppointmentResponse confirmAppointment(
+            @PathVariable(name = "id") UUID id) {
+
+        return appointmentService.confirmAppointment(id);
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public AppointmentResponse cancelAppointment(
+            @PathVariable(name = "id") UUID id) {
+
+        return appointmentService.cancelAppointment(id);
+    }
+
+    @PatchMapping("/{id}/complete")
+    public AppointmentResponse completeAppointment(
+            @PathVariable(name = "id") UUID id) {
+
+        return appointmentService.completeAppointment(id);
+    }
+
+    @PatchMapping("/{id}/no-show")
+    public AppointmentResponse markAppointmentAsNoShow(
+            @PathVariable(name = "id") UUID id) {
+
+        return appointmentService.markAppointmentAsNoShow(id);
+    }
 }

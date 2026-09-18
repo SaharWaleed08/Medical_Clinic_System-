@@ -37,7 +37,6 @@ public class Patient {
     }
 
     public Patient(String name, String email, String password, String phone, LocalDate dateOfBirth, Gender gender, LocalDateTime registrationDate) {
-        this.patientID = UUID.randomUUID();
         this.name = name;
         this.email = email;
         this.password = password;

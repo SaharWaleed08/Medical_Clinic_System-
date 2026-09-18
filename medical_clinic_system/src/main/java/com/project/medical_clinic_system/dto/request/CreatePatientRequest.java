@@ -14,6 +14,9 @@ public class CreatePatientRequest {
     private Gender gender;
     private LocalDateTime registrationDate;
 
+    public CreatePatientRequest() {
+    }
+
     public CreatePatientRequest(String name, String password, String email, String phone, LocalDate dateOfBirth, Gender gender, LocalDateTime registrationDate) {
         this.name = name;
         this.password = password;
