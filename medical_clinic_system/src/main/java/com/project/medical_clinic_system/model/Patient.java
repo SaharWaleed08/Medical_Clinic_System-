@@ -1,23 +1,19 @@
 package com.project.medical_clinic_system.model;
 
 import com.project.medical_clinic_system.enums.Gender;
+import com.project.medical_clinic_system.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "patients")
 public class Patient extends User {
-
-    @Id
-    @GeneratedValue
-    private UUID patientID;
 
     @Column(nullable = false)
     private LocalDate dateOfBirth;
@@ -34,7 +30,7 @@ public class Patient extends User {
 
     public Patient(String name, String email, String password, String phone,
                    LocalDate dateOfBirth, Gender gender, LocalDateTime registrationDate) {
-        super(name, email, password, phone);
+        super(name, email, password, phone, Role.PATIENT);
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.registrationDate = registrationDate;

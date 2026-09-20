@@ -11,7 +11,7 @@ import java.util.Optional;
 @Component
 public class DoctorMapper {
     public DoctorResponse toResponse(Optional<Doctor> doctor) {
-        return new DoctorResponse(doctor.get().getDoctorID(), doctor.get().getName(),doctor.get().getEmail());
+        return new DoctorResponse(doctor.get().getId(), doctor.get().getName(),doctor.get().getEmail());
     }
 
     public List<DoctorResponse> toResponse(List<Doctor> doctors) {

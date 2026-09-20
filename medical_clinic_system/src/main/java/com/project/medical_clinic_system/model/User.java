@@ -1,14 +1,21 @@
 package com.project.medical_clinic_system.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
+import com.project.medical_clinic_system.enums.Role;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Setter
 @Getter
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
 
     @Column(name = "name", nullable = false)
     protected String name;
@@ -22,14 +29,19 @@ public abstract class User {
     @Column(name = "phone", nullable = false)
     protected String phone;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    protected Role role;
+
     public User() {
 
     }
 
-    public User(String name, String email, String password, String phone) {
+    public User(String name, String email, String password, String phone, Role role) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.phone = phone;
+        this.role = role;
     }
 }

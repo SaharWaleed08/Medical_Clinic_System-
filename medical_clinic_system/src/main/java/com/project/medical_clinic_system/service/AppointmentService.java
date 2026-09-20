@@ -60,8 +60,8 @@ public class AppointmentService {
         }
 
         List<Availability> availabilities =
-                availabilityRepository.findByDoctorDoctorIDAndDay(
-                        doctor.get().getDoctorID(),
+                availabilityRepository.findByDoctorIdAndDay(
+                        doctor.get().getId(),
                         appointmentDateTime.getDayOfWeek()
                 );
 
@@ -82,8 +82,8 @@ public class AppointmentService {
         }
 
         boolean doctorHasConflict =
-                appointmentRepository.existsByDoctorDoctorIDAndAppointmentDateTime(
-                        doctor.get().getDoctorID(),
+                appointmentRepository.existsByDoctorIdAndAppointmentDateTime(
+                        doctor.get().getId(),
                         appointmentDateTime
                 );
 
@@ -92,8 +92,8 @@ public class AppointmentService {
         }
 
         boolean patientHasConflict =
-                appointmentRepository.existsByPatientPatientIDAndAppointmentDateTime(
-                        patient.get().getPatientID(),
+                appointmentRepository.existsByPatientIdAndAppointmentDateTime(
+                        patient.get().getId(),
                         appointmentDateTime
                 );
 
@@ -136,7 +136,7 @@ public class AppointmentService {
         }
 
         List<Appointment> appointments =
-                appointmentRepository.findByPatientPatientID(patientID);
+                appointmentRepository.findByPatientId(patientID);
 
         return appointments.stream()
                 .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
@@ -150,7 +150,7 @@ public class AppointmentService {
         }
 
         List<Appointment> appointments =
-                appointmentRepository.findByDoctorDoctorID(doctorID);
+                appointmentRepository.findByDoctorId(doctorID);
 
         return appointments.stream()
                 .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))

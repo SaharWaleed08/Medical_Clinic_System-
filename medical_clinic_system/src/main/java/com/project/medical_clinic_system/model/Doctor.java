@@ -1,22 +1,18 @@
 package com.project.medical_clinic_system.model;
 
+import com.project.medical_clinic_system.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "doctors")
 public class Doctor extends User {
-
-    @Id
-    @GeneratedValue
-    private UUID doctorID;
 
     @Column(name = "license_number", nullable = false)
     private String licenseNumber;
@@ -38,7 +34,7 @@ public class Doctor extends User {
                   String licenseNumber, Integer yearsOfExperience,
                   BigDecimal consultationFee) {
 
-        super(name, email, password, phone);
+        super(name, email, password, phone, Role.DOCTOR);
 
         this.licenseNumber = licenseNumber;
         this.yearsOfExperience = yearsOfExperience;

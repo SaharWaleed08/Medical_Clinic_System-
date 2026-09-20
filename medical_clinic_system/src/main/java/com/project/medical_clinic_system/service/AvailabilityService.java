@@ -42,7 +42,7 @@ public class AvailabilityService {
 
         return new AvailabilityResponse(
                 availability.getId(),
-                availability.getDoctor().getDoctorID(),
+                availability.getDoctor().getId(),
                 availability.getDoctor().getName(),
                 availability.getDay(),
                 availability.getStartTime(),

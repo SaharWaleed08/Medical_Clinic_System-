@@ -11,7 +11,7 @@ import java.util.Optional;
 @Component
 public class PatientMapper {
     public PatientResponse toResponse(Optional<Patient> patient) {
-        return new PatientResponse(patient.get().getPatientID(), patient.get().getName(), patient.get().getEmail(), patient.get().getRegistrationDate());
+        return new PatientResponse(patient.get().getId(), patient.get().getName(), patient.get().getEmail(), patient.get().getRegistrationDate());
     }
 
     public List<PatientResponse> toResponse(List<Patient> patients) {

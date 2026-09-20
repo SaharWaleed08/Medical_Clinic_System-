@@ -12,19 +12,19 @@ import java.util.UUID;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
 
-    boolean existsByDoctorDoctorIDAndAppointmentDateTime(
-            UUID doctorID,
+    boolean existsByDoctorIdAndAppointmentDateTime(
+            UUID doctorId,
             LocalDateTime appointmentDateTime
     );
 
-    boolean existsByPatientPatientIDAndAppointmentDateTime(
-            UUID patientID,
+    boolean existsByPatientIdAndAppointmentDateTime(
+            UUID patientId,
             LocalDateTime appointmentDateTime
     );
 
-    List<Appointment> findByPatientPatientID(UUID patientID);
+    List<Appointment> findByPatientId(UUID patientId);
 
-    List<Appointment> findByDoctorDoctorID(UUID doctorID);
+    List<Appointment> findByDoctorId(UUID doctorId);
 
     List<Appointment> findByStatus(AppointmentStatus status);
 

@@ -14,7 +14,7 @@ public class AvailabilityMapper {
     public AvailabilityResponse toResponse(Optional<Availability> availability) {
         return new AvailabilityResponse(
                 availability.get().getId(),
-                availability.get().getDoctor().getDoctorID(),
+                availability.get().getDoctor().getId(),
                 availability.get().getDoctor().getName(),
                 availability.get().getDay(),
                 availability.get().getStartTime(),

@@ -25,7 +25,7 @@ public class PatientService {
     public PatientResponse createPatient(CreatePatientRequest request) {
         Patient patient = new Patient(request.getName(), request.getEmail(), request.getPassword(), request.getPhone(), request.getDateOfBirth(), request.getGender(), request.getRegistrationDate());
         patientRepository.save(patient);
-        return new PatientResponse(patient.getPatientID(), patient.getName(), patient.getEmail(), patient.getRegistrationDate());
+        return new PatientResponse(patient.getId(), patient.getName(), patient.getEmail(), patient.getRegistrationDate());
     }
 
     public PatientResponse findPatientByID(UUID patientID) {

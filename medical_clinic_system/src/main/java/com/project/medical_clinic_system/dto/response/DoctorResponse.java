@@ -3,22 +3,23 @@ package com.project.medical_clinic_system.dto.response;
 import java.util.UUID;
 
 public class DoctorResponse {
-    private UUID doctorID;
+
+    private UUID id;
     private String name;
     private String email;
 
-    public DoctorResponse(UUID doctorID, String name, String email) {
-        this.doctorID = doctorID;
+    public DoctorResponse(UUID id, String name, String email) {
+        this.id = id;
         this.name = name;
         this.email = email;
     }
 
-    public UUID getDoctorID() {
-        return doctorID;
+    public UUID getId() {
+        return id;
     }
 
-    public void setDoctorID(UUID doctorID) {
-        this.doctorID = doctorID;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {

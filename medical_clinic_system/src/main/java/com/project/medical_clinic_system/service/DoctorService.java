@@ -13,6 +13,7 @@ import java.util.UUID;
 
 @Service
 public class DoctorService {
+
     private final DoctorRepository doctorRepository;
     private final DoctorMapper doctorMapper;
 
@@ -22,22 +23,42 @@ public class DoctorService {
     }
 
     public DoctorResponse createDoctor(CreateDoctorRequest request) {
-        Doctor doctor = new Doctor(request.getName(), request.getEmail(), request.getPassword(), request.getPhone(), request.getLicenseNumber(), request.getYearsOfExperience(), request.getConsultationFee());
+
+        Doctor doctor = new Doctor(
+                request.getName(),
+                request.getEmail(),
+                request.getPassword(),
+                request.getPhone(),
+                request.getLicenseNumber(),
+                request.getYearsOfExperience(),
+                request.getConsultationFee()
+        );
+
         doctorRepository.save(doctor);
-        return new DoctorResponse(doctor.getDoctorID(), doctor.getName(), doctor.getEmail());
+
+        return new DoctorResponse(
+                doctor.getId(),
+                doctor.getName(),
+                doctor.getEmail()
+        );
     }
 
     public DoctorResponse findDoctorByID(UUID doctorID) {
+
         Optional<Doctor> doctor = doctorRepository.findById(doctorID);
+
         return doctorMapper.toResponse(doctor);
     }
 
     public List<DoctorResponse> findAllDoctor() {
+
         List<Doctor> doctors = doctorRepository.findAll();
+
         return doctorMapper.toResponse(doctors);
     }
 
     public DoctorResponse updateDoctorByID(UUID doctorID, CreateDoctorRequest request) {
+
         Optional<Doctor> doctor = doctorRepository.findById(doctorID);
 
         Doctor existingDoctor = doctor.get();
@@ -56,8 +77,9 @@ public class DoctorService {
     }
 
     public String deleteDoctorByID(UUID doctorID) {
+
         doctorRepository.deleteById(doctorID);
+
         return "Doctor is deleted";
     }
-
 }

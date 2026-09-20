@@ -13,9 +13,9 @@ public class AppointmentMapper {
 
         return new AppointmentResponse(
                 appointment.get().getId(),
-                appointment.get().getPatient().getPatientID(),
+                appointment.get().getPatient().getId(),
                 appointment.get().getPatient().getName(),
-                appointment.get().getDoctor().getDoctorID(),
+                appointment.get().getDoctor().getId(),
                 appointment.get().getDoctor().getName(),
                 appointment.get().getAppointmentDateTime(),
                 appointment.get().getReasonForVisit(),
