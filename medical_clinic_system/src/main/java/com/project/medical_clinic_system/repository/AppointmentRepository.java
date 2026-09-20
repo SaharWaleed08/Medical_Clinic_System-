@@ -32,4 +32,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
             LocalDateTime start,
             LocalDateTime end
     );
+
+    boolean existsByDoctorIdAndAppointmentDateTimeAndStatusNot(
+            UUID doctorId,
+            LocalDateTime appointmentDateTime,
+            AppointmentStatus status
+    );
 }

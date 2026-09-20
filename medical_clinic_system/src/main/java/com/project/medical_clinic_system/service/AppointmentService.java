@@ -2,6 +2,7 @@ package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreateAppointmentRequest;
 import com.project.medical_clinic_system.dto.response.AppointmentResponse;
+import com.project.medical_clinic_system.dto.response.AvailableSlotResponse;
 import com.project.medical_clinic_system.enums.AppointmentStatus;
 import com.project.medical_clinic_system.mapper.AppointmentMapper;
 import com.project.medical_clinic_system.model.Appointment;
@@ -14,7 +15,9 @@ import com.project.medical_clinic_system.repository.DoctorRepository;
 import com.project.medical_clinic_system.repository.PatientRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -254,5 +257,58 @@ public class AppointmentService {
         appointmentRepository.save(appointment.get());
 
         return appointmentMapper.toResponse(appointment);
+    }
+
+    public List<AvailableSlotResponse> getAvailableSlots(
+            UUID doctorId,
+            LocalDate date) {
+
+        if (doctorRepository.findById(doctorId).isEmpty()) {
+            throw new RuntimeException("Doctor not found");
+        }
+
+        List<Availability> availabilities =
+                availabilityRepository.findByDoctorIdAndDay(
+                        doctorId,
+                        date.getDayOfWeek()
+                );
+
+        List<AvailableSlotResponse> availableSlots = new ArrayList<>();
+
+        for (Availability availability : availabilities) {
+
+            LocalDateTime start = LocalDateTime.of(
+                    date,
+                    availability.getStartTime()
+            );
+
+            LocalDateTime end = LocalDateTime.of(
+                    date,
+                    availability.getEndTime()
+            );
+
+            LocalDateTime current = start;
+
+            while (current.isBefore(end)) {
+
+                boolean booked =
+                        appointmentRepository
+                                .existsByDoctorIdAndAppointmentDateTimeAndStatusNot(
+                                        doctorId,
+                                        current,
+                                        AppointmentStatus.CANCELLED
+                                );
+
+                if (!booked) {
+                    availableSlots.add(
+                            new AvailableSlotResponse(current)
+                    );
+                }
+
+                current = current.plusMinutes(30);
+            }
+        }
+
+        return availableSlots;
     }
 }

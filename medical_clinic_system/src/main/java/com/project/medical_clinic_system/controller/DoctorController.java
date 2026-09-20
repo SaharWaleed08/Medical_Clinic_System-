@@ -2,11 +2,13 @@ package com.project.medical_clinic_system.controller;
 
 import com.project.medical_clinic_system.dto.request.CreateDoctorRequest;
 import com.project.medical_clinic_system.dto.response.AppointmentResponse;
+import com.project.medical_clinic_system.dto.response.AvailableSlotResponse;
 import com.project.medical_clinic_system.dto.response.DoctorResponse;
 import com.project.medical_clinic_system.service.AppointmentService;
 import com.project.medical_clinic_system.service.DoctorService;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,5 +58,13 @@ public class DoctorController {
     public List<AppointmentResponse> findDoctorAppointments(
             @PathVariable(name = "doctorID") UUID doctorID) {
         return appointmentService.findDoctorAppointments(doctorID);
+    }
+
+    @GetMapping("/{id}/available-slots")
+    public List<AvailableSlotResponse> getAvailableSlots(
+            @PathVariable(name = "id") UUID id,
+            @RequestParam LocalDate date) {
+
+        return appointmentService.getAvailableSlots(id, date);
     }
 }
