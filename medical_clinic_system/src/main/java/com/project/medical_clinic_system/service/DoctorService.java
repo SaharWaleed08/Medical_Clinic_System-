@@ -5,8 +5,11 @@ import com.project.medical_clinic_system.dto.response.DoctorResponse;
 import com.project.medical_clinic_system.mapper.DoctorMapper;
 import com.project.medical_clinic_system.model.Doctor;
 import com.project.medical_clinic_system.repository.DoctorRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,6 +44,22 @@ public class DoctorService {
                 doctor.getName(),
                 doctor.getEmail()
         );
+    }
+    public Page<DoctorResponse> findDoctors(String name, Pageable pageable) {
+
+        Page<Doctor> doctors;
+
+        if (name == null || name.isBlank()) {
+            doctors = doctorRepository.findAll(pageable);
+        } else {
+            doctors = doctorRepository.findByNameContainingIgnoreCase(name, pageable);
+        }
+
+        return doctors.map(doctor -> new DoctorResponse(
+                doctor.getId(),
+                doctor.getName(),
+                doctor.getEmail()
+        ));
     }
 
     public DoctorResponse findDoctorByID(UUID doctorID) {

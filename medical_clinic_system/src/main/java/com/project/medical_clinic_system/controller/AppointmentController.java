@@ -2,8 +2,13 @@ package com.project.medical_clinic_system.controller;
 
 import com.project.medical_clinic_system.dto.request.CreateAppointmentRequest;
 import com.project.medical_clinic_system.dto.response.AppointmentResponse;
+import com.project.medical_clinic_system.dto.response.DoctorResponse;
 import com.project.medical_clinic_system.enums.AppointmentStatus;
 import com.project.medical_clinic_system.service.AppointmentService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -28,20 +33,20 @@ public class AppointmentController {
     }
 
     @GetMapping
-    public List<AppointmentResponse> findAllAppointments(
-            @RequestParam(name = "status", required = false) AppointmentStatus status,
-            @RequestParam(name = "start", required = false) LocalDateTime start,
-            @RequestParam(name = "end", required = false) LocalDateTime end) {
+    public Page<AppointmentResponse> getAppointments(
+            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
 
-        if (status != null) {
-            return appointmentService.findAppointmentsByStatus(status);
-        }
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(Sort.Direction.ASC, sortBy)
+                : Sort.by(Sort.Direction.DESC, sortBy);
 
-        if (start != null && end != null) {
-            return appointmentService.findAppointmentsByDate(start, end);
-        }
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        return appointmentService.findAllAppointments();
+        return appointmentService.findAppointments(name, pageable);
     }
 
     @GetMapping("/{id}")
