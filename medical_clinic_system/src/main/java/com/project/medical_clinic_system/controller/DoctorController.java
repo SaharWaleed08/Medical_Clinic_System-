@@ -53,7 +53,6 @@ public class DoctorController {
         return doctorService.findDoctors(name, pageable);
     }
 
-
     @GetMapping("/{doctorID}")
     public DoctorResponse getDoctorByID(
             @PathVariable(name = "doctorID") UUID doctorID) {
