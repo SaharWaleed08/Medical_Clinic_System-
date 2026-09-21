@@ -1,11 +1,13 @@
 package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreatePatientRequest;
+import com.project.medical_clinic_system.dto.response.DoctorResponse;
 import com.project.medical_clinic_system.dto.response.PatientResponse;
-import com.project.medical_clinic_system.model.Doctor;
 import com.project.medical_clinic_system.model.Patient;
 import com.project.medical_clinic_system.mapper.PatientMapper;
 import com.project.medical_clinic_system.repository.PatientRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +28,20 @@ public class PatientService {
         Patient patient = new Patient(request.getName(), request.getEmail(), request.getPassword(), request.getPhone(), request.getDateOfBirth(), request.getGender(), request.getRegistrationDate());
         patientRepository.save(patient);
         return new PatientResponse(patient.getId(), patient.getName(), patient.getEmail(), patient.getRegistrationDate());
+    }
+
+    public Page<PatientResponse> findPatients(String name, Pageable pageable) {
+
+        Page<Patient> patients;
+
+        if (name == null || name.isBlank()) {
+            patients = patientRepository.findAll(pageable);
+        } else {
+            patients = patientRepository.findByNameContainingIgnoreCase(name, pageable);
+        }
+
+        return patients.map(patient -> new PatientResponse(patient.getId(), patient.getName(), patient.getEmail(), patient.getRegistrationDate())
+        );
     }
 
     public PatientResponse findPatientByID(UUID patientID) {

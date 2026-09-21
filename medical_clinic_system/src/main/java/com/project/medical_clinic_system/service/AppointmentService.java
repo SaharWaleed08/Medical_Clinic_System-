@@ -3,6 +3,7 @@ package com.project.medical_clinic_system.service;
 import com.project.medical_clinic_system.dto.request.CreateAppointmentRequest;
 import com.project.medical_clinic_system.dto.response.AppointmentResponse;
 import com.project.medical_clinic_system.dto.response.AvailableSlotResponse;
+import com.project.medical_clinic_system.dto.response.DoctorResponse;
 import com.project.medical_clinic_system.enums.AppointmentStatus;
 import com.project.medical_clinic_system.mapper.AppointmentMapper;
 import com.project.medical_clinic_system.model.Appointment;
@@ -13,6 +14,8 @@ import com.project.medical_clinic_system.repository.AppointmentRepository;
 import com.project.medical_clinic_system.repository.AvailabilityRepository;
 import com.project.medical_clinic_system.repository.DoctorRepository;
 import com.project.medical_clinic_system.repository.PatientRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -121,6 +124,28 @@ public class AppointmentService {
         Optional<Appointment> appointment = appointmentRepository.findById(id);
 
         return appointmentMapper.toResponse(appointment);
+    }
+
+    public Page<AppointmentResponse> findAppointments(String name, Pageable pageable) {
+
+        Page<Appointment> appointments;
+
+        if (name == null || name.isBlank()) {
+            appointments = appointmentRepository.findAll(pageable);
+        } else {
+            appointments = appointmentRepository.findByNameContainingIgnoreCase(name, pageable);
+        }
+
+        return appointments.map(appointment -> new AppointmentResponse(
+                appointment.getId(),
+                appointment.getPatient().getId(),
+                appointment.getPatient().getName(),
+                appointment.getDoctor().getId(),
+                appointment.getDoctor().getName(),
+                appointment.getAppointmentDateTime(),
+                appointment.getReasonForVisit(),
+                appointment.getStatus()
+        ));
     }
 
     public List<AppointmentResponse> findAllAppointments() {

@@ -27,6 +27,7 @@ public class GlobalExceptionHandler {
     }
 
 
+
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleDuplicate(
             DuplicateResourceException ex,
@@ -47,6 +48,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGeneral(
             Exception ex,
             HttpServletRequest request) {
+
+        ex.printStackTrace();   // <-- هنا
 
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
