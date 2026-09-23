@@ -1,6 +1,5 @@
-package com.project.medical_clinic_system.controller;
+package com.project.medical_clinic_system.controller.get;
 
-import com.project.medical_clinic_system.dto.request.CreateDoctorRequest;
 import com.project.medical_clinic_system.dto.response.AppointmentResponse;
 import com.project.medical_clinic_system.dto.response.AvailableSlotResponse;
 import com.project.medical_clinic_system.dto.response.DoctorResponse;
@@ -18,20 +17,15 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/doctors")
-public class DoctorController {
+public class DoctorGetController {
 
     private final DoctorService doctorService;
     private final AppointmentService appointmentService;
 
-    public DoctorController(DoctorService doctorService,
-                            AppointmentService appointmentService) {
+    public DoctorGetController(DoctorService doctorService,
+                               AppointmentService appointmentService) {
         this.doctorService = doctorService;
         this.appointmentService = appointmentService;
-    }
-
-    @PostMapping
-    public DoctorResponse createDoctor(@RequestBody CreateDoctorRequest request) {
-        return doctorService.createDoctor(request);
     }
 
     @GetMapping
@@ -51,26 +45,10 @@ public class DoctorController {
         return doctorService.findDoctors(name, pageable);
     }
 
-
     @GetMapping("/{doctorID}")
     public DoctorResponse getDoctorByID(
             @PathVariable(name = "doctorID") UUID doctorID) {
         return doctorService.findDoctorByID(doctorID);
-    }
-
-
-
-    @PutMapping("/{doctorID}")
-    public DoctorResponse updateDoctorByID(
-            @PathVariable(name = "doctorID") UUID doctorID,
-            @RequestBody CreateDoctorRequest request) {
-        return doctorService.updateDoctorByID(doctorID, request);
-    }
-
-    @DeleteMapping("/{doctorID}")
-    public String deleteDoctorByID(
-            @PathVariable(name = "doctorID") UUID doctorID) {
-        return doctorService.deleteDoctorByID(doctorID);
     }
 
     @GetMapping("/{doctorID}/appointments")

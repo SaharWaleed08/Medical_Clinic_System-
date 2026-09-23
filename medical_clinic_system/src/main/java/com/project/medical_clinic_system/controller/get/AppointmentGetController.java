@@ -1,9 +1,6 @@
-package com.project.medical_clinic_system.controller;
+package com.project.medical_clinic_system.controller.get;
 
-import com.project.medical_clinic_system.dto.request.CreateAppointmentRequest;
 import com.project.medical_clinic_system.dto.response.AppointmentResponse;
-import com.project.medical_clinic_system.dto.response.DoctorResponse;
-import com.project.medical_clinic_system.enums.AppointmentStatus;
 import com.project.medical_clinic_system.service.AppointmentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,25 +8,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/appointments")
-public class AppointmentController {
+public class AppointmentGetController {
 
     private final AppointmentService appointmentService;
 
-    public AppointmentController(AppointmentService appointmentService) {
+    public AppointmentGetController(AppointmentService appointmentService) {
         this.appointmentService = appointmentService;
-    }
-
-    @PostMapping
-    public AppointmentResponse createAppointment(
-            @RequestBody CreateAppointmentRequest request) {
-
-        return appointmentService.createAppointment(request);
     }
 
     @GetMapping
@@ -54,33 +42,5 @@ public class AppointmentController {
             @PathVariable(name = "id") UUID id) {
 
         return appointmentService.findAppointmentByID(id);
-    }
-
-    @PatchMapping("/{id}/confirm")
-    public AppointmentResponse confirmAppointment(
-            @PathVariable(name = "id") UUID id) {
-
-        return appointmentService.confirmAppointment(id);
-    }
-
-    @PatchMapping("/{id}/cancel")
-    public AppointmentResponse cancelAppointment(
-            @PathVariable(name = "id") UUID id) {
-
-        return appointmentService.cancelAppointment(id);
-    }
-
-    @PatchMapping("/{id}/complete")
-    public AppointmentResponse completeAppointment(
-            @PathVariable(name = "id") UUID id) {
-
-        return appointmentService.completeAppointment(id);
-    }
-
-    @PatchMapping("/{id}/no-show")
-    public AppointmentResponse markAppointmentAsNoShow(
-            @PathVariable(name = "id") UUID id) {
-
-        return appointmentService.markAppointmentAsNoShow(id);
     }
 }
