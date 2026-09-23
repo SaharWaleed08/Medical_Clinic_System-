@@ -5,7 +5,6 @@ import com.project.medical_clinic_system.dto.response.AvailabilityResponse;
 import com.project.medical_clinic_system.service.AvailabilityService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,16 +20,6 @@ public class AvailabilityController {
     @PostMapping
     public AvailabilityResponse createAvailability(@RequestBody CreateAvailabilityRequest request) {
         return availabilityService.createAvailability(request);
-    }
-
-    @GetMapping("/{availabilityID}")
-    public AvailabilityResponse getAvailabilityByID(@PathVariable UUID availabilityID) {
-        return availabilityService.findAvailabilityByID(availabilityID);
-    }
-
-    @GetMapping
-    public List<AvailabilityResponse> getAllAvailability() {
-        return availabilityService.findAllAvailability();
     }
 
     @DeleteMapping("/{availabilityID}")
