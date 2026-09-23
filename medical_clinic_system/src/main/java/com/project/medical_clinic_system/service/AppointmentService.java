@@ -148,15 +148,6 @@ public class AppointmentService {
         ));
     }
 
-    public List<AppointmentResponse> findAllAppointments() {
-
-        List<Appointment> appointments = appointmentRepository.findAll();
-
-        return appointments.stream()
-                .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
-                .toList();
-    }
-
     public List<AppointmentResponse> findPatientAppointments(UUID patientID) {
 
         if (patientRepository.findById(patientID).isEmpty()) {

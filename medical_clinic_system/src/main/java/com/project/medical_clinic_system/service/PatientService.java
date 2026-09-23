@@ -49,11 +49,6 @@ public class PatientService {
         return patientMapper.toResponse(patient);
     }
 
-    public List<PatientResponse> findAllPatient() {
-        List<Patient> patients = patientRepository.findAll();
-        return patientMapper.toResponse(patients);
-    }
-
     public PatientResponse updatePatientByID(UUID patientID, CreatePatientRequest request) {
         Optional<Patient> patient = patientRepository.findById(patientID);
 
