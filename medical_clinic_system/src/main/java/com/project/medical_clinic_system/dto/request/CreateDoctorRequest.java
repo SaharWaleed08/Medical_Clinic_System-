@@ -1,30 +1,40 @@
 package com.project.medical_clinic_system.dto.request;
 
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
 public class CreateDoctorRequest {
-    @NotBlank
+    @NotBlank(message = "Name is required")
     @Size(min = 10, max = 100)
     private String name;
-    @NotBlank
-    @Email
+    @NotBlank(message = "Email is required")
+    @Email(message = "invalid email")
     private String email;
     @NotBlank
-    @Size(min = 8, max = 20)
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+            message = "invalid password"
+    )
     private String password;
-    @NotBlank
-    @Size(min = 11, max = 13)
+    @NotBlank(message = "Phone is required")
+    @Pattern(
+            regexp = "^01[0125][0-9]{8}$",
+            message = "Invalid phone number"
+    )
     private String phone;
-    @NotBlank
+    @NotBlank(message = "License number is required")
+    @Pattern(
+            regexp = "^\\d{4}-\\d{4}$",
+            message = "License number must be in format 1234-5678"
+    )
     private String licenseNumber;
-    @NotBlank
+    @NotBlank(message = "Years of experience is required")
+    @Positive
     private Integer yearsOfExperience;
     @NotBlank
+    @Positive
     private BigDecimal consultationFee;
 
     public CreateDoctorRequest() {

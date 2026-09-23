@@ -1,31 +1,37 @@
 package com.project.medical_clinic_system.dto.request;
 
 import com.project.medical_clinic_system.enums.Gender;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class CreatePatientRequest {
-    @NotBlank
+    @NotBlank(message = "Name is required")
     @Size(min = 10, max = 100)
     private String name;
-    @NotBlank
-    @Size(min = 8, max = 20)
+    @NotBlank(message = "Password is required")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+            message = "invalid password"
+    )
     private String password;
-    @NotBlank
-    @Email
+    @NotBlank(message = "Email is required")
+    @Email(message = "invalid email")
     private String email;
-    @NotBlank
-    @Size(min = 11, max = 13)
+    @NotBlank(message = "Phone is required")
+    @Pattern(
+            regexp = "^01[0125][0-9]{8}$",
+            message = "Invalid phone number"
+    )
     private String phone;
-    @NotBlank
+    @NotBlank(message = "Date of birth is required")
+    @Past
     private LocalDate dateOfBirth;
-    @NotBlank
+    @NotBlank(message = "Gender is required")
     private Gender gender;
     @NotBlank
+    @PastOrPresent
     private LocalDateTime registrationDate;
 
     public CreatePatientRequest() {
