@@ -1,13 +1,18 @@
 package com.project.medical_clinic_system.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class CreateAppointmentRequest {
-
+    @NotBlank
     private UUID patientID;
+    @NotBlank
     private UUID doctorID;
+    @NotBlank
     private LocalDateTime appointmentDateTime;
+    @NotBlank
     private String reasonForVisit;
 
     public CreateAppointmentRequest() {

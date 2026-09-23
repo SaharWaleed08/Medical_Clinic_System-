@@ -1,13 +1,19 @@
 package com.project.medical_clinic_system.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.UUID;
 
 public class CreateAvailabilityRequest {
+    @NotBlank
     private UUID doctorID;
+    @NotBlank
     private DayOfWeek day;
+    @NotBlank
     private LocalTime startTime;
+    @NotBlank
     private LocalTime endTime;
 
     public CreateAvailabilityRequest() {

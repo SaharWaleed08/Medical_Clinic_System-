@@ -1,17 +1,31 @@
 package com.project.medical_clinic_system.dto.request;
 
 import com.project.medical_clinic_system.enums.Gender;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class CreatePatientRequest {
+    @NotBlank
+    @Size(min = 10, max = 100)
     private String name;
+    @NotBlank
+    @Size(min = 8, max = 20)
     private String password;
+    @NotBlank
+    @Email
     private String email;
+    @NotBlank
+    @Size(min = 11, max = 13)
     private String phone;
+    @NotBlank
     private LocalDate dateOfBirth;
+    @NotBlank
     private Gender gender;
+    @NotBlank
     private LocalDateTime registrationDate;
 
     public CreatePatientRequest() {

@@ -1,16 +1,30 @@
 package com.project.medical_clinic_system.dto.request;
 
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
 public class CreateDoctorRequest {
+    @NotBlank
+    @Size(min = 10, max = 100)
     private String name;
+    @NotBlank
+    @Email
     private String email;
+    @NotBlank
+    @Size(min = 8, max = 20)
     private String password;
+    @NotBlank
+    @Size(min = 11, max = 13)
     private String phone;
+    @NotBlank
     private String licenseNumber;
+    @NotBlank
     private Integer yearsOfExperience;
+    @NotBlank
     private BigDecimal consultationFee;
 
     public CreateDoctorRequest() {

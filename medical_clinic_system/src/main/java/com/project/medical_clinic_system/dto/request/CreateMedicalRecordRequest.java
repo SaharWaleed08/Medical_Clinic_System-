@@ -1,14 +1,22 @@
 package com.project.medical_clinic_system.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
 public class CreateMedicalRecordRequest {
+    @NotBlank
     private UUID patientID;
+    @NotBlank
     private UUID doctorID;
+    @NotBlank
     private UUID appointmentID;
+    @NotBlank
     private String diagnosis;
+    @NotBlank
     private String medicalNotes;
+    @NotBlank
     private LocalDate recordCreationDate;
 
 
