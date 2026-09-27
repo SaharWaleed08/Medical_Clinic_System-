@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/availabilities")
+@RequestMapping("/api/availability")
 public class AvailabilityGetController {
 
     private final AvailabilityService availabilityService;
