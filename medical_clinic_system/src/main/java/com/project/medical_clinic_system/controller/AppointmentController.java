@@ -2,8 +2,6 @@ package com.project.medical_clinic_system.controller;
 
 import com.project.medical_clinic_system.dto.request.CreateAppointmentRequest;
 import com.project.medical_clinic_system.dto.response.AppointmentResponse;
-import com.project.medical_clinic_system.dto.response.DoctorResponse;
-import com.project.medical_clinic_system.enums.AppointmentStatus;
 import com.project.medical_clinic_system.service.AppointmentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,8 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @RestController

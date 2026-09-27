@@ -13,6 +13,7 @@ public class Appointment {
     @Id
     @GeneratedValue
     private UUID id;
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
