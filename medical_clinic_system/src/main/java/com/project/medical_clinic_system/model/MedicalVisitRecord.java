@@ -12,17 +12,17 @@ public class MedicalVisitRecord {
     @Id
     @GeneratedValue
     private UUID id;
-    @Column(name = "patient_id",nullable = false,unique = true)
+    @Column(name = "patient_id", nullable = false, unique = true)
     private UUID patientID;
-    @Column(name = "doctor_id",nullable = false,unique = true)
+    @Column(name = "doctor_id", nullable = false, unique = true)
     private UUID doctorID;
-    @Column(name = "appointment_id",nullable = false,unique = true)
+    @Column(name = "appointment_id", nullable = false, unique = true)
     private UUID appointmentID;
-    @Column(name = "diagnosis",nullable = false)
+    @Column(name = "diagnosis", nullable = false)
     private String diagnosis;
-    @Column(name = "medical_notes",nullable = false)
+    @Column(name = "medical_notes", nullable = false)
     private String medicalNotes;
-    @Column(name = "record_creation_date",nullable = false)
+    @Column(name = "record_creation_date", nullable = false)
     private LocalDate recordCreationDate;
 
     public MedicalVisitRecord() {
