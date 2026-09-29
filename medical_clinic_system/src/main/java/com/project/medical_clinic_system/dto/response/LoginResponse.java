@@ -8,27 +8,17 @@ import java.util.UUID;
 @Setter
 @Getter
 public class LoginResponse {
-    private UUID id;
-    private String name;
+    private String token;
 
-    public LoginResponse(UUID id, String name) {
-        this.id = id;
-        this.name = name;
+    public LoginResponse(String token) {
+        this.token = token;
     }
 
-    public UUID getId() {
-        return id;
+    public String getToken() {
+        return token;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setToken(String token) {
+        this.token = token;
     }
 }
