@@ -6,19 +6,19 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Component
 public class DoctorMapper {
-    public DoctorResponse toResponse(Optional<Doctor> doctor) {
-        return new DoctorResponse(doctor.get().getId(), doctor.get().getName(),doctor.get().getEmail());
+    public DoctorResponse toResponse(Doctor doctor) {
+        return new DoctorResponse(doctor.getId(), doctor.getName(),doctor.getEmail());
     }
 
     public List<DoctorResponse> toResponse(List<Doctor> doctors) {
         List<DoctorResponse> responses = new ArrayList<>();
 
         for (Doctor doctor : doctors ) {
-            responses.add(toResponse(Optional.ofNullable(doctor)));
+            responses.add(toResponse(doctor));
         }
 
         return responses;
