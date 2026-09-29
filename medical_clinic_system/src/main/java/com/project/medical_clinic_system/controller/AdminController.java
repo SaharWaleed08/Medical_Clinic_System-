@@ -15,12 +15,19 @@ public class AdminController {
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
     }
+
     @PostMapping
-    public AdminResponse CreateAdmin(@RequestBody CreateAdminRequest request){
+    public AdminResponse CreateAdmin(@RequestBody CreateAdminRequest request) {
         return adminService.createAdmin(request);
     }
+
+    @PutMapping("{adminID}")
+    public AdminResponse updateAdmin(@PathVariable(name = "adminID") UUID adminID, @RequestBody CreateAdminRequest request) {
+        return adminService.updateById(adminID, request);
+    }
+
     @DeleteMapping("{adminID}")
-    public String deleteAdmin(@PathVariable(name = "adminID") UUID adminID ){
+    public String deleteAdmin(@PathVariable(name = "adminID") UUID adminID) {
         return adminService.deleteById(adminID);
     }
 
