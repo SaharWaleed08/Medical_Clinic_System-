@@ -11,14 +11,14 @@ import java.util.Optional;
 @Component
 public class AvailabilityMapper {
 
-    public AvailabilityResponse toResponse(Optional<Availability> availability) {
+    public AvailabilityResponse toResponse(Availability availability) {
         return new AvailabilityResponse(
-                availability.get().getId(),
-                availability.get().getDoctor().getId(),
-                availability.get().getDoctor().getName(),
-                availability.get().getDay(),
-                availability.get().getStartTime(),
-                availability.get().getEndTime()
+                availability.getId(),
+                availability.getDoctor().getId(),
+                availability.getDoctor().getName(),
+                availability.getDay(),
+                availability.getStartTime(),
+                availability.getEndTime()
         );
     }
 
@@ -26,7 +26,7 @@ public class AvailabilityMapper {
         List<AvailabilityResponse> responses = new ArrayList<>();
 
         for (Availability availability : availabilities) {
-            responses.add(toResponse(Optional.ofNullable(availability)));
+            responses.add(toResponse(availability));
         }
 
         return responses;
