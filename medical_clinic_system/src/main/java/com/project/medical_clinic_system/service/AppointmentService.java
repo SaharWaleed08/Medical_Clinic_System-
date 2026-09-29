@@ -3,8 +3,11 @@ package com.project.medical_clinic_system.service;
 import com.project.medical_clinic_system.dto.request.CreateAppointmentRequest;
 import com.project.medical_clinic_system.dto.response.AppointmentResponse;
 import com.project.medical_clinic_system.dto.response.AvailableSlotResponse;
-import com.project.medical_clinic_system.dto.response.DoctorResponse;
 import com.project.medical_clinic_system.enums.AppointmentStatus;
+import com.project.medical_clinic_system.exception.AppointmentConflictException;
+import com.project.medical_clinic_system.exception.DoctorUnavailableException;
+import com.project.medical_clinic_system.exception.InvalidStatusTransitionException;
+import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.AppointmentMapper;
 import com.project.medical_clinic_system.model.Appointment;
 import com.project.medical_clinic_system.model.Availability;
@@ -22,7 +25,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -48,16 +50,10 @@ public class AppointmentService {
 
     public AppointmentResponse createAppointment(CreateAppointmentRequest request) {
 
-        Optional<Patient> patient = patientRepository.findById(request.getPatientID());
-        Optional<Doctor> doctor = doctorRepository.findById(request.getDoctorID());
-
-        if (patient.isEmpty()) {
-            throw new RuntimeException("Patient not found");
-        }
-
-        if (doctor.isEmpty()) {
-            throw new RuntimeException("Doctor not found");
-        }
+        Patient patient = patientRepository.findById(request.getPatientID())
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+        Doctor doctor = doctorRepository.findById(request.getDoctorID())
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
         LocalDateTime appointmentDateTime = request.getAppointmentDateTime();
 
@@ -67,7 +63,7 @@ public class AppointmentService {
 
         List<Availability> availabilities =
                 availabilityRepository.findByDoctorIdAndDay(
-                        doctor.get().getId(),
+                        doctor.getId(),
                         appointmentDateTime.getDayOfWeek()
                 );
 
@@ -84,44 +80,44 @@ public class AppointmentService {
         }
 
         if (!available) {
-            throw new RuntimeException("Doctor is not available at this time");
+            throw new DoctorUnavailableException("Doctor is not available at this time");
         }
 
         boolean doctorHasConflict =
                 appointmentRepository.existsByDoctorIdAndAppointmentDateTime(
-                        doctor.get().getId(),
+                        doctor.getId(),
                         appointmentDateTime
                 );
 
         if (doctorHasConflict) {
-            throw new RuntimeException("Doctor already has an appointment at this time");
+            throw new AppointmentConflictException("Doctor already has an appointment at this time");
         }
 
         boolean patientHasConflict =
                 appointmentRepository.existsByPatientIdAndAppointmentDateTime(
-                        patient.get().getId(),
+                        patient.getId(),
                         appointmentDateTime
                 );
 
         if (patientHasConflict) {
-            throw new RuntimeException("Patient already has an appointment at this time");
+            throw new AppointmentConflictException("Patient already has an appointment at this time");
         }
 
         Appointment appointment = new Appointment(
-                patient.get(),
-                doctor.get(),
+                patient,
+                doctor,
                 appointmentDateTime,
                 request.getReasonForVisit()
         );
 
         appointmentRepository.save(appointment);
 
-        return appointmentMapper.toResponse(Optional.of(appointment));
+        return appointmentMapper.toResponse(appointment);
     }
 
     public AppointmentResponse findAppointmentByID(UUID id) {
-
-        Optional<Appointment> appointment = appointmentRepository.findById(id);
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
         return appointmentMapper.toResponse(appointment);
     }
@@ -151,29 +147,25 @@ public class AppointmentService {
     public List<AppointmentResponse> findPatientAppointments(UUID patientID) {
 
         if (patientRepository.findById(patientID).isEmpty()) {
-            throw new RuntimeException("Patient not found");
+            throw new ResourceNotFoundException("Patient not found");
         }
 
         List<Appointment> appointments =
                 appointmentRepository.findByPatientId(patientID);
 
-        return appointments.stream()
-                .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
-                .toList();
+        return appointmentMapper.toResponse(appointments);
     }
 
     public List<AppointmentResponse> findDoctorAppointments(UUID doctorID) {
 
         if (doctorRepository.findById(doctorID).isEmpty()) {
-            throw new RuntimeException("Doctor not found");
+            throw new ResourceNotFoundException("Doctor not found");
         }
 
         List<Appointment> appointments =
                 appointmentRepository.findByDoctorId(doctorID);
 
-        return appointments.stream()
-                .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
-                .toList();
+        return appointmentMapper.toResponse(appointments);
     }
 
     public List<AppointmentResponse> findAppointmentsByStatus(AppointmentStatus status) {
@@ -181,9 +173,7 @@ public class AppointmentService {
         List<Appointment> appointments =
                 appointmentRepository.findByStatus(status);
 
-        return appointments.stream()
-                .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
-                .toList();
+        return appointmentMapper.toResponse(appointments);
     }
 
     public List<AppointmentResponse> findAppointmentsByDate(
@@ -193,84 +183,71 @@ public class AppointmentService {
         List<Appointment> appointments =
                 appointmentRepository.findByAppointmentDateTimeBetween(start, end);
 
-        return appointments.stream()
-                .map(appointment -> appointmentMapper.toResponse(Optional.of(appointment)))
-                .toList();
+        return appointmentMapper.toResponse(appointments);
     }
 
     public AppointmentResponse confirmAppointment(UUID id) {
 
-        Optional<Appointment> appointment = appointmentRepository.findById(id);
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
-        if (appointment.isEmpty()) {
-            throw new RuntimeException("Appointment not found");
+        if (appointment.getStatus() != AppointmentStatus.PENDING) {
+            throw new InvalidStatusTransitionException("Appointment cannot be confirmed");
         }
 
-        if (appointment.get().getStatus() != AppointmentStatus.PENDING) {
-            throw new RuntimeException("Appointment cannot be confirmed");
-        }
+        appointment.setStatus(AppointmentStatus.CONFIRMED);
 
-        appointment.get().setStatus(AppointmentStatus.CONFIRMED);
-
-        appointmentRepository.save(appointment.get());
+        appointmentRepository.save(appointment);
 
         return appointmentMapper.toResponse(appointment);
     }
 
     public AppointmentResponse cancelAppointment(UUID id) {
 
-        Optional<Appointment> appointment = appointmentRepository.findById(id);
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
-        if (appointment.isEmpty()) {
-            throw new RuntimeException("Appointment not found");
+
+        if (appointment.getStatus() != AppointmentStatus.PENDING
+                && appointment.getStatus() != AppointmentStatus.CONFIRMED) {
+            throw new InvalidStatusTransitionException("Appointment cannot be cancelled");
         }
 
-        if (appointment.get().getStatus() != AppointmentStatus.PENDING
-                && appointment.get().getStatus() != AppointmentStatus.CONFIRMED) {
-            throw new RuntimeException("Appointment cannot be cancelled");
-        }
+        appointment.setStatus(AppointmentStatus.CANCELLED);
 
-        appointment.get().setStatus(AppointmentStatus.CANCELLED);
-
-        appointmentRepository.save(appointment.get());
+        appointmentRepository.save(appointment);
 
         return appointmentMapper.toResponse(appointment);
     }
 
     public AppointmentResponse completeAppointment(UUID id) {
 
-        Optional<Appointment> appointment = appointmentRepository.findById(id);
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
-        if (appointment.isEmpty()) {
-            throw new RuntimeException("Appointment not found");
+        if (appointment.getStatus() != AppointmentStatus.CONFIRMED) {
+            throw new InvalidStatusTransitionException("Appointment cannot be completed");
         }
 
-        if (appointment.get().getStatus() != AppointmentStatus.CONFIRMED) {
-            throw new RuntimeException("Appointment cannot be completed");
-        }
+        appointment.setStatus(AppointmentStatus.COMPLETED);
 
-        appointment.get().setStatus(AppointmentStatus.COMPLETED);
-
-        appointmentRepository.save(appointment.get());
+        appointmentRepository.save(appointment);
 
         return appointmentMapper.toResponse(appointment);
     }
 
     public AppointmentResponse markAppointmentAsNoShow(UUID id) {
 
-        Optional<Appointment> appointment = appointmentRepository.findById(id);
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
-        if (appointment.isEmpty()) {
-            throw new RuntimeException("Appointment not found");
+        if (appointment.getStatus() != AppointmentStatus.CONFIRMED) {
+            throw new InvalidStatusTransitionException("Appointment cannot be marked as no-show");
         }
 
-        if (appointment.get().getStatus() != AppointmentStatus.CONFIRMED) {
-            throw new RuntimeException("Appointment cannot be marked as no-show");
-        }
+        appointment.setStatus(AppointmentStatus.NO_SHOW);
 
-        appointment.get().setStatus(AppointmentStatus.NO_SHOW);
-
-        appointmentRepository.save(appointment.get());
+        appointmentRepository.save(appointment);
 
         return appointmentMapper.toResponse(appointment);
     }
@@ -280,7 +257,7 @@ public class AppointmentService {
             LocalDate date) {
 
         if (doctorRepository.findById(doctorId).isEmpty()) {
-            throw new RuntimeException("Doctor not found");
+            throw new ResourceNotFoundException("Doctor not found");
         }
 
         List<Availability> availabilities =
