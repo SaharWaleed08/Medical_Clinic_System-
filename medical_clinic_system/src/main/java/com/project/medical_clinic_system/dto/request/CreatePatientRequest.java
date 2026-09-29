@@ -1,5 +1,6 @@
 package com.project.medical_clinic_system.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.medical_clinic_system.enums.Gender;
 import jakarta.validation.constraints.*;
 
@@ -26,6 +27,7 @@ public class CreatePatientRequest {
     )
     private String phone;
     @NotBlank(message = "Date of birth is required")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Past
     private LocalDate dateOfBirth;
     @NotBlank(message = "Gender is required")

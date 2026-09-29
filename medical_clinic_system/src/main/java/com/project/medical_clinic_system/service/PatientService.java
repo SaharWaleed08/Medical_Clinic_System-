@@ -1,16 +1,16 @@
 package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreatePatientRequest;
-import com.project.medical_clinic_system.dto.response.DoctorResponse;
 import com.project.medical_clinic_system.dto.response.PatientResponse;
+import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.model.Patient;
 import com.project.medical_clinic_system.mapper.PatientMapper;
 import com.project.medical_clinic_system.repository.PatientRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,16 +18,18 @@ import java.util.UUID;
 public class PatientService {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public PatientService(PatientRepository patientRepository, PatientMapper patientMapper) {
+    public PatientService(PatientRepository patientRepository, PatientMapper patientMapper, PasswordEncoder passwordEncoder) {
         this.patientRepository = patientRepository;
         this.patientMapper = patientMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public PatientResponse createPatient(CreatePatientRequest request) {
-        Patient patient = new Patient(request.getName(), request.getEmail(), request.getPassword(), request.getPhone(), request.getDateOfBirth(), request.getGender(), request.getRegistrationDate());
+        Patient patient = new Patient(request.getName(), request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getPhone(), request.getDateOfBirth(), request.getGender(), request.getRegistrationDate());
         patientRepository.save(patient);
-        return new PatientResponse(patient.getId(), patient.getName(), patient.getEmail(), patient.getRegistrationDate());
+        return patientMapper.toResponse(patient);
     }
 
     public Page<PatientResponse> findPatients(String name, Pageable pageable) {
@@ -45,26 +47,27 @@ public class PatientService {
     }
 
     public PatientResponse findPatientByID(UUID patientID) {
-        Optional<Patient> patient = patientRepository.findById(patientID);
+        Patient patient = patientRepository.findById(patientID)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
         return patientMapper.toResponse(patient);
     }
 
     public PatientResponse updatePatientByID(UUID patientID, CreatePatientRequest request) {
-        Optional<Patient> patient = patientRepository.findById(patientID);
 
-        Patient existingPatient = patient.get();
+        Patient patient = patientRepository.findById(patientID)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
-        existingPatient.setName(request.getName());
-        existingPatient.setEmail(request.getEmail());
-        existingPatient.setPassword(request.getPassword());
-        existingPatient.setPhone(request.getPhone());
-        existingPatient.setDateOfBirth(request.getDateOfBirth());
-        existingPatient.setGender(request.getGender());
-        existingPatient.setRegistrationDate(request.getRegistrationDate());
 
-        patientRepository.save(existingPatient);
+        patient.setName(request.getName());
+        patient.setEmail(request.getEmail());
+        patient.setPassword(passwordEncoder.encode(request.getPassword()));
+        patient.setPhone(request.getPhone());
+        patient.setDateOfBirth(request.getDateOfBirth());
+        patient.setGender(request.getGender());
+        patient.setRegistrationDate(request.getRegistrationDate());
 
-        return patientMapper.toResponse(Optional.of(existingPatient));
+
+        return patientMapper.toResponse(patient);
     }
 
     public String deletePatientByID(UUID patientID) {

@@ -2,6 +2,7 @@ package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreatePrescriptionRequest;
 import com.project.medical_clinic_system.dto.response.PrescriptionResponse;
+import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.PrescriptionMapper;
 import com.project.medical_clinic_system.model.Prescription;
 import com.project.medical_clinic_system.repository.PrescriptionRepository;
@@ -24,18 +25,21 @@ public class PrescriptionService {
     public PrescriptionResponse createPrescription(CreatePrescriptionRequest request) {
         Prescription prescription = new Prescription(request.getRecordID(), request.getMedicationName(), request.getDosage(), request.getFrequency(), request.getTreatmentDuration(), request.getAdditionalInstruction());
         prescriptionRepository.save(prescription);
-        return prescriptionMapper.toResponse(Optional.of(prescription));
+        return prescriptionMapper.toResponse(prescription);
     }
 
     public PrescriptionResponse findPrescriptionById(UUID prescriptionID) {
-        Optional<Prescription> prescription = prescriptionRepository.findById(prescriptionID);
+        Prescription prescription = prescriptionRepository.findById(prescriptionID)
+                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
         return prescriptionMapper.toResponse(prescription);
     }
-    public List<PrescriptionResponse> findAll(){
-        List<Prescription> prescriptions=prescriptionRepository.findAll();
+
+    public List<PrescriptionResponse> findAll() {
+        List<Prescription> prescriptions = prescriptionRepository.findAll();
         return prescriptionMapper.toResponse(prescriptions);
     }
-    public String deletePrescriptionById(UUID prescriptionID){
+
+    public String deletePrescriptionById(UUID prescriptionID) {
         prescriptionRepository.deleteById(prescriptionID);
         return "Prescription is deleted";
     }

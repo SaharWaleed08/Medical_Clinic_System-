@@ -2,11 +2,13 @@ package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreateDoctorRequest;
 import com.project.medical_clinic_system.dto.response.DoctorResponse;
+import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.DoctorMapper;
 import com.project.medical_clinic_system.model.Doctor;
 import com.project.medical_clinic_system.repository.DoctorRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.print.Doc;
@@ -19,10 +21,12 @@ public class DoctorService {
 
     private final DoctorRepository doctorRepository;
     private final DoctorMapper doctorMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public DoctorService(DoctorRepository doctorRepository, DoctorMapper doctorMapper) {
+    public DoctorService(DoctorRepository doctorRepository, DoctorMapper doctorMapper, PasswordEncoder passwordEncoder) {
         this.doctorRepository = doctorRepository;
         this.doctorMapper = doctorMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public DoctorResponse createDoctor(CreateDoctorRequest request) {
@@ -30,7 +34,7 @@ public class DoctorService {
         Doctor doctor = new Doctor(
                 request.getName(),
                 request.getEmail(),
-                request.getPassword(),
+                passwordEncoder.encode(request.getPassword()),
                 request.getPhone(),
                 request.getLicenseNumber(),
                 request.getYearsOfExperience(),
@@ -45,6 +49,7 @@ public class DoctorService {
                 doctor.getEmail()
         );
     }
+
     public Page<DoctorResponse> findDoctors(String name, Pageable pageable) {
 
         Page<Doctor> doctors;
@@ -63,8 +68,8 @@ public class DoctorService {
     }
 
     public DoctorResponse findDoctorByID(UUID doctorID) {
-
-        Optional<Doctor> doctor = doctorRepository.findById(doctorID);
+        Doctor doctor = doctorRepository.findById(doctorID)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
         return doctorMapper.toResponse(doctor);
     }
@@ -78,21 +83,21 @@ public class DoctorService {
 
     public DoctorResponse updateDoctorByID(UUID doctorID, CreateDoctorRequest request) {
 
-        Optional<Doctor> doctor = doctorRepository.findById(doctorID);
+        Doctor doctor = doctorRepository.findById(doctorID)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
-        Doctor existingDoctor = doctor.get();
 
-        existingDoctor.setName(request.getName());
-        existingDoctor.setEmail(request.getEmail());
-        existingDoctor.setPassword(request.getPassword());
-        existingDoctor.setPhone(request.getPhone());
-        existingDoctor.setLicenseNumber(request.getLicenseNumber());
-        existingDoctor.setYearsOfExperience(request.getYearsOfExperience());
-        existingDoctor.setConsultationFee(request.getConsultationFee());
+        doctor.setName(request.getName());
+        doctor.setEmail(request.getEmail());
+        doctor.setPassword(passwordEncoder.encode(request.getPassword()));
+        doctor.setPhone(request.getPhone());
+        doctor.setLicenseNumber(request.getLicenseNumber());
+        doctor.setYearsOfExperience(request.getYearsOfExperience());
+        doctor.setConsultationFee(request.getConsultationFee());
 
-        doctorRepository.save(existingDoctor);
+        doctorRepository.save(doctor);
 
-        return doctorMapper.toResponse(Optional.of(existingDoctor));
+        return doctorMapper.toResponse(doctor);
     }
 
     public String deleteDoctorByID(UUID doctorID) {

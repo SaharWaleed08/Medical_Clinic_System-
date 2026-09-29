@@ -2,6 +2,7 @@ package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreateAvailabilityRequest;
 import com.project.medical_clinic_system.dto.response.AvailabilityResponse;
+import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.AvailabilityMapper;
 import com.project.medical_clinic_system.model.Availability;
 import com.project.medical_clinic_system.model.Doctor;
@@ -40,18 +41,12 @@ public class AvailabilityService {
 
         availabilityRepository.save(availability);
 
-        return new AvailabilityResponse(
-                availability.getId(),
-                availability.getDoctor().getId(),
-                availability.getDoctor().getName(),
-                availability.getDay(),
-                availability.getStartTime(),
-                availability.getEndTime()
-        );
+        return availabilityMapper.toResponse(availability);
     }
 
     public AvailabilityResponse findAvailabilityByID(UUID id) {
-        Optional<Availability> availability = availabilityRepository.findById(id);
+        Availability availability = availabilityRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Availability not found"));
         return availabilityMapper.toResponse(availability);
     }
 
