@@ -4,10 +4,7 @@ import com.project.medical_clinic_system.dto.request.CreateAppointmentRequest;
 import com.project.medical_clinic_system.dto.response.AppointmentResponse;
 import com.project.medical_clinic_system.dto.response.AvailableSlotResponse;
 import com.project.medical_clinic_system.enums.AppointmentStatus;
-import com.project.medical_clinic_system.exception.AppointmentConflictException;
-import com.project.medical_clinic_system.exception.DoctorUnavailableException;
-import com.project.medical_clinic_system.exception.InvalidStatusTransitionException;
-import com.project.medical_clinic_system.exception.ResourceNotFoundException;
+import com.project.medical_clinic_system.exception.*;
 import com.project.medical_clinic_system.mapper.AppointmentMapper;
 import com.project.medical_clinic_system.model.Appointment;
 import com.project.medical_clinic_system.model.Availability;
@@ -17,6 +14,7 @@ import com.project.medical_clinic_system.repository.AppointmentRepository;
 import com.project.medical_clinic_system.repository.AvailabilityRepository;
 import com.project.medical_clinic_system.repository.DoctorRepository;
 import com.project.medical_clinic_system.repository.PatientRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
@@ -58,7 +57,7 @@ public class AppointmentService {
         LocalDateTime appointmentDateTime = request.getAppointmentDateTime();
 
         if (!appointmentDateTime.isAfter(LocalDateTime.now())) {
-            throw new RuntimeException("Appointment must be in the future");
+            throw new InvalidDataException("Appointment must be in the future");
         }
 
         List<Availability> availabilities =
@@ -132,16 +131,7 @@ public class AppointmentService {
             appointments = appointmentRepository.findByNameContainingIgnoreCase(name, pageable);
         }
 
-        return appointments.map(appointment -> new AppointmentResponse(
-                appointment.getId(),
-                appointment.getPatient().getId(),
-                appointment.getPatient().getName(),
-                appointment.getDoctor().getId(),
-                appointment.getDoctor().getName(),
-                appointment.getAppointmentDateTime(),
-                appointment.getReasonForVisit(),
-                appointment.getStatus()
-        ));
+        return appointments.map(appointmentMapper::toResponse);
     }
 
     public List<AppointmentResponse> findPatientAppointments(UUID patientID) {

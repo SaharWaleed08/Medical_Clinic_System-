@@ -23,32 +23,7 @@ public class Specialization {
     }
 
     public Specialization( String name, String description) {
-        this.specializationID = UUID.randomUUID();
         this.name = name;
-        this.description = description;
-    }
-
-    public UUID getSpecializationID() {
-        return specializationID;
-    }
-
-    public void setSpecializationID(UUID specializationID) {
-        this.specializationID = specializationID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
     }
 }

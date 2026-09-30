@@ -5,9 +5,13 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import com.project.medical_clinic_system.enums.AppointmentStatus;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "appointments")
+@Getter
+@Setter
 public class Appointment {
 
     @Id
@@ -44,53 +48,5 @@ public class Appointment {
         this.appointmentDateTime = appointmentDateTime;
         this.reasonForVisit = reasonForVisit;
         this.status = AppointmentStatus.PENDING;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Patient getPatient() {
-        return patient;
-    }
-
-    public void setPatient(Patient patient) {
-        this.patient = patient;
-    }
-
-    public Doctor getDoctor() {
-        return doctor;
-    }
-
-    public void setDoctor(Doctor doctor) {
-        this.doctor = doctor;
-    }
-
-    public LocalDateTime getAppointmentDateTime() {
-        return appointmentDateTime;
-    }
-
-    public void setAppointmentDateTime(LocalDateTime appointmentDateTime) {
-        this.appointmentDateTime = appointmentDateTime;
-    }
-
-    public String getReasonForVisit() {
-        return reasonForVisit;
-    }
-
-    public void setReasonForVisit(String reasonForVisit) {
-        this.reasonForVisit = reasonForVisit;
-    }
-
-    public AppointmentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(AppointmentStatus status) {
-        this.status = status;
     }
 }

@@ -8,6 +8,7 @@ import com.project.medical_clinic_system.model.Availability;
 import com.project.medical_clinic_system.model.Doctor;
 import com.project.medical_clinic_system.repository.AvailabilityRepository;
 import com.project.medical_clinic_system.repository.DoctorRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class AvailabilityService {
 
     private final AvailabilityRepository availabilityRepository;
@@ -31,6 +33,9 @@ public class AvailabilityService {
 
     public AvailabilityResponse createAvailability(CreateAvailabilityRequest request) {
         Optional<Doctor> doctor = doctorRepository.findById(request.getDoctorID());
+        if (doctor.isEmpty()) {
+            throw new ResourceNotFoundException("Doctor not found");
+        }
 
         Availability availability = new Availability(
                 doctor.get(),

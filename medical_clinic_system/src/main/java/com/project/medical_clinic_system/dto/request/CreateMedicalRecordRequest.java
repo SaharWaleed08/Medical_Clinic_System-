@@ -2,10 +2,14 @@ package com.project.medical_clinic_system.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Getter
+@Setter
 public class CreateMedicalRecordRequest {
     @NotBlank(message = "Patient id is required")
     @Pattern(
@@ -42,51 +46,4 @@ public class CreateMedicalRecordRequest {
         this.recordCreationDate = recordCreationDate;
     }
 
-    public UUID getPatientID() {
-        return patientID;
-    }
-
-    public void setPatientID(UUID patientID) {
-        this.patientID = patientID;
-    }
-
-    public UUID getDoctorID() {
-        return doctorID;
-    }
-
-    public void setDoctorID(UUID doctorID) {
-        this.doctorID = doctorID;
-    }
-
-    public UUID getAppointmentID() {
-        return appointmentID;
-    }
-
-    public void setAppointmentID(UUID appointmentID) {
-        this.appointmentID = appointmentID;
-    }
-
-    public String getDiagnosis() {
-        return diagnosis;
-    }
-
-    public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
-    }
-
-    public String getMedicalNotes() {
-        return medicalNotes;
-    }
-
-    public void setMedicalNotes(String medicalNotes) {
-        this.medicalNotes = medicalNotes;
-    }
-
-    public LocalDate getRecordCreationDate() {
-        return recordCreationDate;
-    }
-
-    public void setRecordCreationDate(LocalDate recordCreationDate) {
-        this.recordCreationDate = recordCreationDate;
-    }
 }

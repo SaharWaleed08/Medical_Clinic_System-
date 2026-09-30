@@ -3,12 +3,13 @@ package com.project.medical_clinic_system.controller;
 import com.project.medical_clinic_system.dto.request.CreateMedicalRecordRequest;
 import com.project.medical_clinic_system.dto.response.MedicalRecordResponse;
 import com.project.medical_clinic_system.service.MedicalRecordService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/medicalRecords")
+@RequestMapping("/api/medical-record")
 public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
@@ -19,7 +20,7 @@ public class MedicalRecordController {
 
     @PostMapping
     public MedicalRecordResponse CreateMedicalRecord(
-            @RequestBody CreateMedicalRecordRequest request) {
+            @Valid @RequestBody CreateMedicalRecordRequest request) {
         return medicalRecordService.CreateMedicalRecord(request);
     }
 

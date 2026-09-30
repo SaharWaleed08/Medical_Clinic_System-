@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                HttpStatus.CONFLICT.value(),
                 exception.getMessage(),
                 request.getRequestURI()
         );

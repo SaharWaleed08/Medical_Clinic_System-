@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/specialization")
+@RequestMapping("/api/specializations")
 public class SpecializationGetController {
 
     private final SpecializationService specializationService;

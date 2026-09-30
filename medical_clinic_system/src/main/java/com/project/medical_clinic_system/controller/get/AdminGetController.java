@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admins")
 public class AdminGetController {
     private final AdminService adminService;
 

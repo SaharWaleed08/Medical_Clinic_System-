@@ -1,9 +1,12 @@
 package com.project.medical_clinic_system.dto.response;
 
-import jakarta.persistence.Column;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
+@Getter
+@Setter
 public class SpecializationResponse {
     private UUID specializationID;
     private String name;
@@ -15,27 +18,4 @@ public class SpecializationResponse {
         this.description = description;
     }
 
-    public UUID getSpecializationID() {
-        return specializationID;
-    }
-
-    public void setSpecializationID(UUID specializationID) {
-        this.specializationID = specializationID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

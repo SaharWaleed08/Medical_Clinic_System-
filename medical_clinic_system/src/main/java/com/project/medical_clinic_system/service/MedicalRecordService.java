@@ -6,13 +6,14 @@ import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.MedicalRecordMapper;
 import com.project.medical_clinic_system.model.MedicalVisitRecord;
 import com.project.medical_clinic_system.repository.MedicalRecordRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class MedicalRecordService {
     private final MedicalRecordRepository medicalRecordRepository;
     private final MedicalRecordMapper medicalRecordMapper;

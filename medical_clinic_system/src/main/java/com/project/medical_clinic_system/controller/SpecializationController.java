@@ -3,12 +3,13 @@ package com.project.medical_clinic_system.controller;
 import com.project.medical_clinic_system.dto.request.CreateSpecializationRequest;
 import com.project.medical_clinic_system.dto.response.SpecializationResponse;
 import com.project.medical_clinic_system.service.SpecializationService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/specializations")
+@RequestMapping("/api/specialization")
 public class SpecializationController {
 
     private final SpecializationService specializationService;
@@ -19,14 +20,14 @@ public class SpecializationController {
 
     @PostMapping
     public SpecializationResponse createSpecialization(
-            @RequestBody CreateSpecializationRequest request) {
+            @Valid @RequestBody CreateSpecializationRequest request) {
         return specializationService.createSpecialization(request);
     }
 
     @PutMapping("/{specializationID}")
     public SpecializationResponse updateSpecializationByID(
             @PathVariable UUID specializationID,
-            @RequestBody CreateSpecializationRequest request) {
+            @Valid @RequestBody CreateSpecializationRequest request) {
         return specializationService.updateSpecializationByID(specializationID, request);
     }
 

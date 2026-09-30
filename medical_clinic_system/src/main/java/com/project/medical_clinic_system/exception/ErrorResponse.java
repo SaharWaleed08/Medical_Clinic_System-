@@ -1,7 +1,12 @@
 package com.project.medical_clinic_system.exception;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 public class ErrorResponse {
 
     private LocalDateTime timestamp;
@@ -14,21 +19,5 @@ public class ErrorResponse {
         this.status = status;
         this.message = message;
         this.path = path;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getPath() {
-        return path;
     }
 }

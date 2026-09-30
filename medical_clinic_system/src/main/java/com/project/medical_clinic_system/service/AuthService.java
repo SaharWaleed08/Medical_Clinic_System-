@@ -8,10 +8,12 @@ import com.project.medical_clinic_system.exception.InvalidDataException;
 import com.project.medical_clinic_system.model.User;
 import com.project.medical_clinic_system.repository.UserRepository;
 import com.project.medical_clinic_system.security.JwtService;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class AuthService {
     private final UserRepository userRepository;
     private final DoctorService doctorService;
@@ -34,10 +36,7 @@ public class AuthService {
     public LoginResponse loginUser(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new InvalidDataException(" email or password"));
-        if (passwordEncoder.matches(
-                request.getPassword(),
-                user.getPassword()
-        )) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidDataException(user.getPassword() + " and " + request.getPassword());
         }
         String token = jwtService.generateToken(user);
@@ -69,7 +68,7 @@ public class AuthService {
                     new CreateDoctorRequest(
                             request.name(),
                             request.email(),
-                            passwordEncoder.encode(request.password()),
+                            request.password(),
                             request.phone(),
                             request.licenseNumber(),
                             request.yearsOfExperience(),
@@ -81,7 +80,7 @@ public class AuthService {
         if (request.role() == Role.ADMIN) {
             CreateAdminRequest adminRequest = new CreateAdminRequest(
                     request.name(),
-                    passwordEncoder.encode(request.password()),
+                    request.password(),
                     request.email(),
                     request.phone(),
                     request.adminPassword()

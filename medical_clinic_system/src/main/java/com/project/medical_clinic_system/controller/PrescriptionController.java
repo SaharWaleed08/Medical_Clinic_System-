@@ -3,12 +3,13 @@ package com.project.medical_clinic_system.controller;
 import com.project.medical_clinic_system.dto.request.CreatePrescriptionRequest;
 import com.project.medical_clinic_system.dto.response.PrescriptionResponse;
 import com.project.medical_clinic_system.service.PrescriptionService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/prescriptions")
+@RequestMapping("/api/prescription")
 public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
@@ -19,7 +20,7 @@ public class PrescriptionController {
 
     @PostMapping
     public PrescriptionResponse createPrescription(
-            @RequestBody CreatePrescriptionRequest request) {
+            @Valid @RequestBody CreatePrescriptionRequest request) {
         return prescriptionService.createPrescription(request);
     }
 

@@ -3,12 +3,13 @@ package com.project.medical_clinic_system.controller;
 import com.project.medical_clinic_system.dto.request.CreateAvailabilityRequest;
 import com.project.medical_clinic_system.dto.response.AvailabilityResponse;
 import com.project.medical_clinic_system.service.AvailabilityService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/availabilities")
+@RequestMapping("/api/availability")
 public class AvailabilityController {
 
     private final AvailabilityService availabilityService;
@@ -18,7 +19,7 @@ public class AvailabilityController {
     }
 
     @PostMapping
-    public AvailabilityResponse createAvailability(@RequestBody CreateAvailabilityRequest request) {
+    public AvailabilityResponse createAvailability(@Valid @RequestBody CreateAvailabilityRequest request) {
         return availabilityService.createAvailability(request);
     }
 

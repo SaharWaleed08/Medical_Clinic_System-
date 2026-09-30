@@ -2,12 +2,12 @@ package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreateAdminRequest;
 import com.project.medical_clinic_system.dto.response.AdminResponse;
-import com.project.medical_clinic_system.dto.response.PatientResponse;
 import com.project.medical_clinic_system.exception.InvalidAdminRegistrationPasswordException;
 import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.AdminMapper;
 import com.project.medical_clinic_system.model.Admin;
 import com.project.medical_clinic_system.repository.AdminRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class AdminService {
     @Value("${admin.registration-password}")
     private String adminPassword;
@@ -24,7 +25,8 @@ public class AdminService {
     private final AdminMapper adminMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public AdminService(AdminRepository adminRepository, AdminMapper adminMapper, PasswordEncoder passwordEncoder) {
+    public AdminService(String adminPassword, AdminRepository adminRepository, AdminMapper adminMapper, PasswordEncoder passwordEncoder) {
+        this.adminPassword = adminPassword;
         this.adminRepository = adminRepository;
         this.adminMapper = adminMapper;
         this.passwordEncoder = passwordEncoder;

@@ -2,15 +2,18 @@ package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreateSpecializationRequest;
 import com.project.medical_clinic_system.dto.response.SpecializationResponse;
+import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.SpecializationMapper;
 import com.project.medical_clinic_system.model.Specialization;
 import com.project.medical_clinic_system.repository.SpecializationRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class SpecializationService {
     private final SpecializationRepository specializationRepository;
     private final SpecializationMapper specializationMapper;
@@ -27,7 +30,8 @@ public class SpecializationService {
     }
 
     public SpecializationResponse findSpecializationByID(UUID specializationID) {
-        Optional<Specialization> specialization = specializationRepository.findById(specializationID);
+        Specialization specialization = specializationRepository.findById(specializationID)
+                .orElseThrow(()->new ResourceNotFoundException("Specialization not found"));
         return specializationMapper.toResponse(specialization);
     }
 
@@ -37,16 +41,15 @@ public class SpecializationService {
     }
 
     public SpecializationResponse updateSpecializationByID(UUID specializationID, CreateSpecializationRequest request) {
-        Optional<Specialization> specialization = specializationRepository.findById(specializationID);
+        Specialization specialization = specializationRepository.findById(specializationID)
+                .orElseThrow(() -> new ResourceNotFoundException("Specialization not found"));
 
-        Specialization existingSpecialization = specialization.get();
+        specialization.setName(request.getName());
+        specialization.setDescription(request.getDescription());
 
-        existingSpecialization.setName(request.getName());
-        existingSpecialization.setDescription(request.getDescription());
+        specializationRepository.save(specialization);
 
-        specializationRepository.save(existingSpecialization);
-
-        return specializationMapper.toResponse(Optional.of(existingSpecialization));
+        return specializationMapper.toResponse(specialization);
     }
 
     public String deleteSpecializationByID(UUID specializationID) {

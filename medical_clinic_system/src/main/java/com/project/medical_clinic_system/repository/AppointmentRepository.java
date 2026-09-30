@@ -2,7 +2,6 @@ package com.project.medical_clinic_system.repository;
 
 import com.project.medical_clinic_system.enums.AppointmentStatus;
 import com.project.medical_clinic_system.model.Appointment;
-import com.project.medical_clinic_system.model.Doctor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,9 +1,14 @@
 package com.project.medical_clinic_system.dto.response;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.UUID;
 
+@Getter
+@Setter
 public class AvailabilityResponse {
 
     private UUID availabilityID;
@@ -23,51 +28,4 @@ public class AvailabilityResponse {
         this.endTime = endTime;
     }
 
-    public UUID getAvailabilityID() {
-        return availabilityID;
-    }
-
-    public void setAvailabilityID(UUID availabilityID) {
-        this.availabilityID = availabilityID;
-    }
-
-    public UUID getDoctorID() {
-        return doctorID;
-    }
-
-    public void setDoctorID(UUID doctorID) {
-        this.doctorID = doctorID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public DayOfWeek getDay() {
-        return day;
-    }
-
-    public void setDay(DayOfWeek day) {
-        this.day = day;
-    }
-
-    public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
-    }
 }

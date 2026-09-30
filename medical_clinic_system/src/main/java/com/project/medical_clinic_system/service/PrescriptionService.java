@@ -6,13 +6,14 @@ import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.PrescriptionMapper;
 import com.project.medical_clinic_system.model.Prescription;
 import com.project.medical_clinic_system.repository.PrescriptionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class PrescriptionService {
     private final PrescriptionRepository prescriptionRepository;
     private final PrescriptionMapper prescriptionMapper;

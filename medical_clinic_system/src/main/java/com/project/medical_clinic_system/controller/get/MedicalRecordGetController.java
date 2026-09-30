@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/medicalRecord")
+@RequestMapping("/api/medical-records")
 public class MedicalRecordGetController {
 
     private final MedicalRecordService medicalRecordService;

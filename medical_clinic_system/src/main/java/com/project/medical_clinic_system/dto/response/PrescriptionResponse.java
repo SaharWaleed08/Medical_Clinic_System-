@@ -1,7 +1,12 @@
 package com.project.medical_clinic_system.dto.response;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.UUID;
 
+@Getter
+@Setter
 public class PrescriptionResponse {
     private UUID prescriptionID;
     private UUID recordID;
@@ -21,59 +26,4 @@ public class PrescriptionResponse {
         this.additionalInstruction = additionalInstruction;
     }
 
-    public UUID getPrescriptionID() {
-        return prescriptionID;
-    }
-
-    public void setPrescriptionID(UUID prescriptionID) {
-        this.prescriptionID = prescriptionID;
-    }
-
-    public UUID getRecordID() {
-        return recordID;
-    }
-
-    public void setRecordID(UUID recordID) {
-        this.recordID = recordID;
-    }
-
-    public String getMedicationName() {
-        return medicationName;
-    }
-
-    public void setMedicationName(String medicationName) {
-        this.medicationName = medicationName;
-    }
-
-    public Integer getDosage() {
-        return dosage;
-    }
-
-    public void setDosage(Integer dosage) {
-        this.dosage = dosage;
-    }
-
-    public Integer getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(Integer frequency) {
-        this.frequency = frequency;
-    }
-
-    public Integer getTreatmentDuration() {
-        return treatmentDuration;
-    }
-
-    public void setTreatmentDuration(Integer treatmentDuration) {
-        this.treatmentDuration = treatmentDuration;
-    }
-
-    public String getAdditionalInstruction() {
-        return additionalInstruction;
-    }
-
-    public void setAdditionalInstruction(String additionalInstruction) {
-        this.additionalInstruction = additionalInstruction;
-    }
 }

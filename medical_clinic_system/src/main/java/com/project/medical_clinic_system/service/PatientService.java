@@ -6,15 +6,16 @@ import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.model.Patient;
 import com.project.medical_clinic_system.mapper.PatientMapper;
 import com.project.medical_clinic_system.repository.PatientRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class PatientService {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;

@@ -1,6 +1,8 @@
 package com.project.medical_clinic_system.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -8,6 +10,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "availabilities")
+@Getter
+@Setter
 public class Availability {
 
     @Id
@@ -18,6 +22,7 @@ public class Availability {
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "availability_day", nullable = false)
     private DayOfWeek day;
 
@@ -37,43 +42,4 @@ public class Availability {
         this.endTime = endTime;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Doctor getDoctor() {
-        return doctor;
-    }
-
-    public void setDoctor(Doctor doctor) {
-        this.doctor = doctor;
-    }
-
-    public DayOfWeek getDay() {
-        return day;
-    }
-
-    public void setDay(DayOfWeek day) {
-        this.day = day;
-    }
-
-    public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
-    }
 }

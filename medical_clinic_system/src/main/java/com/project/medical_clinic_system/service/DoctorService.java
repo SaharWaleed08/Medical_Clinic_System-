@@ -6,17 +6,17 @@ import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.DoctorMapper;
 import com.project.medical_clinic_system.model.Doctor;
 import com.project.medical_clinic_system.repository.DoctorRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.print.Doc;
-import java.util.List;
-import java.util.Optional;
+
 import java.util.UUID;
 
 @Service
+@Transactional
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
@@ -43,11 +43,7 @@ public class DoctorService {
 
         doctorRepository.save(doctor);
 
-        return new DoctorResponse(
-                doctor.getId(),
-                doctor.getName(),
-                doctor.getEmail()
-        );
+        return doctorMapper.toResponse(doctor);
     }
 
     public Page<DoctorResponse> findDoctors(String name, Pageable pageable) {
@@ -60,11 +56,7 @@ public class DoctorService {
             doctors = doctorRepository.findByNameContainingIgnoreCase(name, pageable);
         }
 
-        return doctors.map(doctor -> new DoctorResponse(
-                doctor.getId(),
-                doctor.getName(),
-                doctor.getEmail()
-        ));
+        return doctors.map(doctorMapper::toResponse);
     }
 
     public DoctorResponse findDoctorByID(UUID doctorID) {
@@ -72,13 +64,6 @@ public class DoctorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
         return doctorMapper.toResponse(doctor);
-    }
-
-    public List<DoctorResponse> findAllDoctor() {
-
-        List<Doctor> doctors = doctorRepository.findAll();
-
-        return doctorMapper.toResponse(doctors);
     }
 
     public DoctorResponse updateDoctorByID(UUID doctorID, CreateDoctorRequest request) {
