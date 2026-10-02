@@ -2,10 +2,13 @@ package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreatePatientRequest;
 import com.project.medical_clinic_system.dto.response.PatientResponse;
+import com.project.medical_clinic_system.exception.DuplicateResourceException;
+import com.project.medical_clinic_system.exception.GlobalExceptionHandler;
 import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.model.Patient;
 import com.project.medical_clinic_system.mapper.PatientMapper;
 import com.project.medical_clinic_system.repository.PatientRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,13 +24,16 @@ public class PatientService {
     private final PatientMapper patientMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public PatientService(PatientRepository patientRepository, PatientMapper patientMapper, PasswordEncoder passwordEncoder) {
+    public PatientService(PatientRepository patientRepository, PatientMapper patientMapper, PasswordEncoder passwordEncoder, GlobalExceptionHandler exceptionHandler) {
         this.patientRepository = patientRepository;
         this.patientMapper = patientMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
     public PatientResponse createPatient(CreatePatientRequest request) {
+        if (!patientRepository.existsByEmail(request.getEmail())){
+            throw new DuplicateResourceException("Email already exists");
+        }
         Patient patient = new Patient(request.getName(), request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getPhone(), request.getDateOfBirth(), request.getGender(), request.getRegistrationDate());
         patientRepository.save(patient);
         return patientMapper.toResponse(patient);

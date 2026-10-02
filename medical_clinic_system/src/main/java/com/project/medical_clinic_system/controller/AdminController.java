@@ -4,6 +4,7 @@ import com.project.medical_clinic_system.dto.request.CreateAdminRequest;
 import com.project.medical_clinic_system.dto.response.AdminResponse;
 import com.project.medical_clinic_system.service.AdminService;
 import jakarta.validation.Valid;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;

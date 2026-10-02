@@ -2,6 +2,7 @@ package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreateAdminRequest;
 import com.project.medical_clinic_system.dto.response.AdminResponse;
+import com.project.medical_clinic_system.exception.DuplicateResourceException;
 import com.project.medical_clinic_system.exception.InvalidAdminRegistrationPasswordException;
 import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.AdminMapper;
@@ -25,20 +26,21 @@ public class AdminService {
     private final AdminMapper adminMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public AdminService(String adminPassword, AdminRepository adminRepository, AdminMapper adminMapper, PasswordEncoder passwordEncoder) {
-        this.adminPassword = adminPassword;
+    public AdminService(AdminRepository adminRepository, AdminMapper adminMapper, PasswordEncoder passwordEncoder) {
         this.adminRepository = adminRepository;
         this.adminMapper = adminMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
     public AdminResponse createAdmin(CreateAdminRequest request) {
+        if (!adminRepository.existsByEmail(request.getEmail())){
+            throw new DuplicateResourceException("Email already exists");
+        }
         if (!adminPassword.equals(request.getAdminPassword())) {
             throw new InvalidAdminRegistrationPasswordException(
                     "Invalid admin registration password"
             );
         }
-
 
         Admin admin = new Admin(request.getName(), request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getPhone());
         adminRepository.save(admin);

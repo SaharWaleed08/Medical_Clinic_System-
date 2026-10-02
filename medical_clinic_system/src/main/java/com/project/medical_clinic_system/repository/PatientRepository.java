@@ -11,4 +11,5 @@ import java.util.UUID;
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, UUID> {
     Page<Patient> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    boolean existsByEmail(String email);
 }

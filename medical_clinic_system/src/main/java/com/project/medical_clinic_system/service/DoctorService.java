@@ -2,6 +2,7 @@ package com.project.medical_clinic_system.service;
 
 import com.project.medical_clinic_system.dto.request.CreateDoctorRequest;
 import com.project.medical_clinic_system.dto.response.DoctorResponse;
+import com.project.medical_clinic_system.exception.DuplicateResourceException;
 import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.DoctorMapper;
 import com.project.medical_clinic_system.model.Doctor;
@@ -31,6 +32,9 @@ public class DoctorService {
 
     public DoctorResponse createDoctor(CreateDoctorRequest request) {
 
+        if (!doctorRepository.existsByEmail(request.getEmail())){
+            throw new DuplicateResourceException("Email already exists");
+        }
         Doctor doctor = new Doctor(
                 request.getName(),
                 request.getEmail(),
