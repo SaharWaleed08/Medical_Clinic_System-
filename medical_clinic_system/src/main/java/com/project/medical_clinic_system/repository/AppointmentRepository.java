@@ -24,17 +24,17 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
             LocalDateTime appointmentDateTime
     );
 
-    List<Appointment> findByPatientId(UUID patientId);
+    Page<Appointment> findByPatientId(UUID patientId,Pageable pageable);
 
-    List<Appointment> findByDoctorId(UUID doctorId);
+    Page<Appointment> findByDoctorId(UUID doctorId,Pageable pageable);
 
-    List<Appointment> findByStatus(AppointmentStatus status);
+    Page<Appointment> findByStatus(AppointmentStatus status,Pageable pageable);
 
-    List<Appointment> findByAppointmentDateTimeBetween(
+    Page<Appointment> findByAppointmentDateTimeBetween(
             LocalDateTime start,
-            LocalDateTime end
+            LocalDateTime end,
+            Pageable pageable
     );
-    Page<Appointment> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
     boolean existsByDoctorIdAndAppointmentDateTimeAndStatusNot(
             UUID doctorId,

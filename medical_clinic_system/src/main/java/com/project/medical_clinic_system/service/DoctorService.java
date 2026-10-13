@@ -32,7 +32,7 @@ public class DoctorService {
 
     public DoctorResponse createDoctor(CreateDoctorRequest request) {
 
-        if (!doctorRepository.existsByEmail(request.getEmail())){
+        if (doctorRepository.existsByEmail(request.getEmail())){
             throw new DuplicateResourceException("Email already exists");
         }
         Doctor doctor = new Doctor(

@@ -121,59 +121,47 @@ public class AppointmentService {
         return appointmentMapper.toResponse(appointment);
     }
 
-    public Page<AppointmentResponse> findAppointments(String name, Pageable pageable) {
-
-        Page<Appointment> appointments;
-
-        if (name == null || name.isBlank()) {
-            appointments = appointmentRepository.findAll(pageable);
-        } else {
-            appointments = appointmentRepository.findByNameContainingIgnoreCase(name, pageable);
-        }
-
-        return appointments.map(appointmentMapper::toResponse);
-    }
-
-    public List<AppointmentResponse> findPatientAppointments(UUID patientID) {
+    public Page<AppointmentResponse> findPatientAppointments(UUID patientID, Pageable pageable) {
 
         if (patientRepository.findById(patientID).isEmpty()) {
             throw new ResourceNotFoundException("Patient not found");
         }
 
-        List<Appointment> appointments =
-                appointmentRepository.findByPatientId(patientID);
+        Page<Appointment> appointments =
+                appointmentRepository.findByPatientId(patientID, pageable);
 
-        return appointmentMapper.toResponse(appointments);
+        return appointments.map(appointmentMapper::toResponse);
     }
 
-    public List<AppointmentResponse> findDoctorAppointments(UUID doctorID) {
+    public Page<AppointmentResponse> findDoctorAppointments(UUID doctorID, Pageable pageable) {
 
         if (doctorRepository.findById(doctorID).isEmpty()) {
             throw new ResourceNotFoundException("Doctor not found");
         }
 
-        List<Appointment> appointments =
-                appointmentRepository.findByDoctorId(doctorID);
+        Page<Appointment> appointments =
+                appointmentRepository.findByDoctorId(doctorID, pageable);
 
-        return appointmentMapper.toResponse(appointments);
+        return appointments.map(appointmentMapper::toResponse);
     }
 
-    public List<AppointmentResponse> findAppointmentsByStatus(AppointmentStatus status) {
+    public Page<AppointmentResponse> findAppointmentsByStatus(AppointmentStatus status, Pageable pageable) {
 
-        List<Appointment> appointments =
-                appointmentRepository.findByStatus(status);
+        Page<Appointment> appointments =
+                appointmentRepository.findByStatus(status, pageable);
 
-        return appointmentMapper.toResponse(appointments);
+        return appointments.map(appointmentMapper::toResponse);
     }
 
-    public List<AppointmentResponse> findAppointmentsByDate(
+    public Page<AppointmentResponse> findAppointmentsByDate(
             LocalDateTime start,
-            LocalDateTime end) {
+            LocalDateTime end,
+            Pageable pageable) {
 
-        List<Appointment> appointments =
-                appointmentRepository.findByAppointmentDateTimeBetween(start, end);
+        Page<Appointment> appointments =
+                appointmentRepository.findByAppointmentDateTimeBetween(start, end, pageable);
 
-        return appointmentMapper.toResponse(appointments);
+        return appointments.map(appointmentMapper::toResponse);
     }
 
     public AppointmentResponse confirmAppointment(UUID id) {

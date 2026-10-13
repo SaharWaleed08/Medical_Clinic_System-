@@ -52,9 +52,20 @@ public class DoctorGetController {
     }
 
     @GetMapping("/{doctorID}/appointments")
-    public List<AppointmentResponse> findDoctorAppointments(
-            @PathVariable(name = "doctorID") UUID doctorID) {
-        return appointmentService.findDoctorAppointments(doctorID);
+    public Page<AppointmentResponse> findDoctorAppointments(
+            @PathVariable(name = "doctorID") UUID doctorID,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "doctorID") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+            ) {
+
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(Sort.Direction.ASC, sortBy)
+                : Sort.by(Sort.Direction.DESC, sortBy);
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return appointmentService.findDoctorAppointments(doctorID,pageable);
     }
 
     @GetMapping("/{id}/available-slots")
