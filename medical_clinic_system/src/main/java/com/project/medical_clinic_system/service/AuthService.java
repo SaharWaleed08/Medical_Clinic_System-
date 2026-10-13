@@ -35,9 +35,9 @@ public class AuthService {
 
     public LoginResponse loginUser(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new InvalidDataException(" email or password"));
+                .orElseThrow(() -> new InvalidDataException("invalid email or password"));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new InvalidDataException(user.getPassword() + " and " + request.getPassword());
+            throw new InvalidDataException("invalid email or password");
         }
         String token = jwtService.generateToken(user);
         return new LoginResponse(token);

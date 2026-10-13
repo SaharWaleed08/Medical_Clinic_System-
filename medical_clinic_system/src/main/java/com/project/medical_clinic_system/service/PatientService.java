@@ -31,7 +31,7 @@ public class PatientService {
     }
 
     public PatientResponse createPatient(CreatePatientRequest request) {
-        if (!patientRepository.existsByEmail(request.getEmail())){
+        if (patientRepository.existsByEmail(request.getEmail())){
             throw new DuplicateResourceException("Email already exists");
         }
         Patient patient = new Patient(request.getName(), request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getPhone(), request.getDateOfBirth(), request.getGender(), request.getRegistrationDate());

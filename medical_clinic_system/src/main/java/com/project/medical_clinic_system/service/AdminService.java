@@ -33,7 +33,7 @@ public class AdminService {
     }
 
     public AdminResponse createAdmin(CreateAdminRequest request) {
-        if (!adminRepository.existsByEmail(request.getEmail())){
+        if (adminRepository.existsByEmail(request.getEmail())){
             throw new DuplicateResourceException("Email already exists");
         }
         if (!adminPassword.equals(request.getAdminPassword())) {

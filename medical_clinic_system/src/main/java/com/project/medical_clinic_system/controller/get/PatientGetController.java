@@ -50,8 +50,18 @@ public class PatientGetController {
     }
 
     @GetMapping("/{patientID}/appointments")
-    public List<AppointmentResponse> findPatientAppointments(
-            @PathVariable(name = "patientID") UUID patientID) {
-        return appointmentService.findPatientAppointments(patientID);
+    public Page<AppointmentResponse> findPatientAppointments(
+            @RequestParam(name = "patientID") UUID patientID,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "patientID") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(Sort.Direction.ASC, sortBy)
+                : Sort.by(Sort.Direction.DESC, sortBy);
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return appointmentService.findPatientAppointments(patientID,pageable);
     }
 }
