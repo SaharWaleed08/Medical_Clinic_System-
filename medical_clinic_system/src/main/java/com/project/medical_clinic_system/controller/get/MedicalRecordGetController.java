@@ -2,6 +2,7 @@ package com.project.medical_clinic_system.controller.get;
 
 import com.project.medical_clinic_system.dto.response.MedicalRecordResponse;
 import com.project.medical_clinic_system.service.MedicalRecordService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,12 +18,14 @@ public class MedicalRecordGetController {
         this.medicalRecordService = medicalRecordService;
     }
 
+    @PreAuthorize("@medicalRecordRepository.findById(#medicalRecordId).orElse(null)?.doctorID == authentication.principal.id or @medicalRecordRepository.findById(#medicalRecordId).orElse(null)?.patientID == authentication.principal.id ")
     @GetMapping("/{medicalRecordId}")
     public MedicalRecordResponse getMedicalRecordById(
             @PathVariable(name = "medicalRecordId") UUID medicalRecordId) {
         return medicalRecordService.findById(medicalRecordId);
     }
 
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping
     public List<MedicalRecordResponse> getAll() {
         return medicalRecordService.findAll();

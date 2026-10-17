@@ -4,7 +4,9 @@ import com.project.medical_clinic_system.dto.request.CreatePrescriptionRequest;
 import com.project.medical_clinic_system.dto.response.PrescriptionResponse;
 import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.PrescriptionMapper;
+import com.project.medical_clinic_system.model.MedicalVisitRecord;
 import com.project.medical_clinic_system.model.Prescription;
+import com.project.medical_clinic_system.repository.MedicalRecordRepository;
 import com.project.medical_clinic_system.repository.PrescriptionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -16,15 +18,19 @@ import java.util.UUID;
 @Transactional
 public class PrescriptionService {
     private final PrescriptionRepository prescriptionRepository;
+    private final MedicalRecordRepository medicalRecordRepository;
     private final PrescriptionMapper prescriptionMapper;
 
-    public PrescriptionService(PrescriptionRepository prescriptionRepository, PrescriptionMapper prescriptionMapper) {
+    public PrescriptionService(PrescriptionRepository prescriptionRepository, MedicalRecordRepository medicalRecordRepository, PrescriptionMapper prescriptionMapper) {
         this.prescriptionRepository = prescriptionRepository;
+        this.medicalRecordRepository = medicalRecordRepository;
         this.prescriptionMapper = prescriptionMapper;
     }
 
     public PrescriptionResponse createPrescription(CreatePrescriptionRequest request) {
-        Prescription prescription = new Prescription(request.getRecordID(), request.getMedicationName(), request.getDosage(), request.getFrequency(), request.getTreatmentDuration(), request.getAdditionalInstruction());
+        MedicalVisitRecord medicalVisitRecord=medicalRecordRepository.findById(request.getRecordID())
+                .orElseThrow(()->new ResourceNotFoundException("Medical record not found"));
+        Prescription prescription = new Prescription(medicalVisitRecord, request.getMedicationName(), request.getDosage(), request.getFrequency(), request.getTreatmentDuration(), request.getAdditionalInstruction());
         prescriptionRepository.save(prescription);
         return prescriptionMapper.toResponse(prescription);
     }

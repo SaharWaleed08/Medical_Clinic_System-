@@ -44,20 +44,22 @@ public class AuthService {
     }
 
     public Object registerUser(RegisterRequest request) {
+        if (request.role()==null){
+            throw new InvalidDataException("Role is required");
+        }
 
         if (request.role() == Role.PATIENT) {
 
-
-            CreatePatientRequest patientRequest =
-                    new CreatePatientRequest(
-                            request.name(),
-                            request.password(),
-                            request.email(),
-                            request.phone(),
-                            request.dateOfBirth(),
-                            request.gender(),
-                            request.registrationDate().atStartOfDay()
-                    );
+                CreatePatientRequest patientRequest =
+                        new CreatePatientRequest(
+                                request.name(),
+                                request.password(),
+                                request.email(),
+                                request.phone(),
+                                request.dateOfBirth(),
+                                request.gender(),
+                                request.registrationDate().atStartOfDay()
+                        );
 
             return patientService.createPatient(patientRequest);
         }
@@ -72,7 +74,8 @@ public class AuthService {
                             request.phone(),
                             request.licenseNumber(),
                             request.yearsOfExperience(),
-                            request.consultationFee()
+                            request.consultationFee(),
+                            request.specializationID()
                     );
 
             return doctorService.createDoctor(doctorRequest);

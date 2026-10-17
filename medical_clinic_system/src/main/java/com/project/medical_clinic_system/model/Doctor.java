@@ -14,6 +14,10 @@ import java.util.List;
 @Table(name = "doctors")
 public class Doctor extends User {
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "specialization_id",nullable = false)
+    private Specialization specialization;
+
     @Column(name = "license_number", nullable = false)
     private String licenseNumber;
 
@@ -30,7 +34,7 @@ public class Doctor extends User {
 
     }
 
-    public Doctor(String name, String email, String password, String phone,
+    public Doctor(String name, String email, String password, String phone,Specialization specialization,
                   String licenseNumber, Integer yearsOfExperience,
                   BigDecimal consultationFee) {
 
@@ -39,5 +43,6 @@ public class Doctor extends User {
         this.licenseNumber = licenseNumber;
         this.yearsOfExperience = yearsOfExperience;
         this.consultationFee = consultationFee;
+        this.specialization=specialization;
     }
 }

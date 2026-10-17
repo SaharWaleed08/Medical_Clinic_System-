@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class CreateAdminRequest {
     @NotBlank(message = "Name is required")
-    @Size(min = 10, max = 100)
+    @Size(min = 5, max = 100)
     private String name;
     @NotBlank(message = "Password is required")
     @Pattern(

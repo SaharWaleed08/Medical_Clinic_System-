@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class CreateSpecializationRequest {
     @NotBlank
-    @Size(max = 100)
+    @Size(min = 5, max = 100)
     private String name;
     private String description;
 
