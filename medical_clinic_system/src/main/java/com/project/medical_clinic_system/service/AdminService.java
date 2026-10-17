@@ -8,6 +8,7 @@ import com.project.medical_clinic_system.exception.ResourceNotFoundException;
 import com.project.medical_clinic_system.mapper.AdminMapper;
 import com.project.medical_clinic_system.model.Admin;
 import com.project.medical_clinic_system.repository.AdminRepository;
+import com.project.medical_clinic_system.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -25,15 +26,17 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final AdminMapper adminMapper;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
-    public AdminService(AdminRepository adminRepository, AdminMapper adminMapper, PasswordEncoder passwordEncoder) {
+    public AdminService(AdminRepository adminRepository, AdminMapper adminMapper, PasswordEncoder passwordEncoder, UserRepository userRepository) {
         this.adminRepository = adminRepository;
         this.adminMapper = adminMapper;
         this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
     }
 
     public AdminResponse createAdmin(CreateAdminRequest request) {
-        if (adminRepository.existsByEmail(request.getEmail())){
+        if (userRepository.existsByEmail(request.getEmail())){
             throw new DuplicateResourceException("Email already exists");
         }
         if (!adminPassword.equals(request.getAdminPassword())) {

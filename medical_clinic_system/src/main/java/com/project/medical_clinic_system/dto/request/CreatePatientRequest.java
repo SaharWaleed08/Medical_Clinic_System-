@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 public class CreatePatientRequest {
     @NotBlank(message = "Name is required")
-    @Size(min = 10, max = 100)
+    @Size(min = 5, max = 100)
     private String name;
     @NotBlank(message = "Password is required")
     @Pattern(
@@ -30,13 +30,13 @@ public class CreatePatientRequest {
             message = "Invalid phone number"
     )
     private String phone;
-    @NotBlank(message = "Date of birth is required")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "Date of birth is required")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     @Past
     private LocalDate dateOfBirth;
-    @NotBlank(message = "Gender is required")
+    @NotNull(message = "Gender is required")
     private Gender gender;
-    @NotBlank
+    @NotNull(message = "Registration date is required")
     @PastOrPresent
     private LocalDateTime registrationDate;
 

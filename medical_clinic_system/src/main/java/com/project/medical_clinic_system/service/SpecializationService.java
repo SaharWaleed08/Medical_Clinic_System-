@@ -31,7 +31,7 @@ public class SpecializationService {
 
     public SpecializationResponse findSpecializationByID(UUID specializationID) {
         Specialization specialization = specializationRepository.findById(specializationID)
-                .orElseThrow(()->new ResourceNotFoundException("Specialization not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Specialization not found"));
         return specializationMapper.toResponse(specialization);
     }
 

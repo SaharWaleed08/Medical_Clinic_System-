@@ -56,36 +56,11 @@ public class AppointmentService {
 
         LocalDateTime appointmentDateTime = request.getAppointmentDateTime();
 
-        if (!appointmentDateTime.isAfter(LocalDateTime.now())) {
-            throw new InvalidDataException("Appointment must be in the future");
-        }
-
-        List<Availability> availabilities =
-                availabilityRepository.findByDoctorIdAndDay(
-                        doctor.getId(),
-                        appointmentDateTime.getDayOfWeek()
-                );
-
-        boolean available = false;
-
-        for (Availability availability : availabilities) {
-
-            if (!appointmentDateTime.toLocalTime().isBefore(availability.getStartTime())
-                    && !appointmentDateTime.toLocalTime().isAfter(availability.getEndTime())) {
-
-                available = true;
-                break;
-            }
-        }
-
-        if (!available) {
-            throw new DoctorUnavailableException("Doctor is not available at this time");
-        }
-
         boolean doctorHasConflict =
-                appointmentRepository.existsByDoctorIdAndAppointmentDateTime(
+                appointmentRepository.existsByDoctorIdAndAppointmentDateTimeAndStatusNot(
                         doctor.getId(),
-                        appointmentDateTime
+                        appointmentDateTime,
+                        AppointmentStatus.CANCELLED
                 );
 
         if (doctorHasConflict) {
@@ -93,9 +68,10 @@ public class AppointmentService {
         }
 
         boolean patientHasConflict =
-                appointmentRepository.existsByPatientIdAndAppointmentDateTime(
+                appointmentRepository.existsByPatientIdAndAppointmentDateTimeAndStatusNot(
                         patient.getId(),
-                        appointmentDateTime
+                        appointmentDateTime,
+                        AppointmentStatus.CANCELLED
                 );
 
         if (patientHasConflict) {

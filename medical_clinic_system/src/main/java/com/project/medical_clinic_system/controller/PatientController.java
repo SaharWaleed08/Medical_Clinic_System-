@@ -4,6 +4,7 @@ import com.project.medical_clinic_system.dto.request.CreatePatientRequest;
 import com.project.medical_clinic_system.dto.response.PatientResponse;
 import com.project.medical_clinic_system.service.PatientService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,12 +18,12 @@ public class PatientController {
     public PatientController(PatientService patientService) {
         this.patientService = patientService;
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public PatientResponse createPatient(@Valid @RequestBody CreatePatientRequest request) {
         return patientService.createPatient(request);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (isAuthenticated() and #patientID == authentication.principal.id)")
     @PutMapping("/{patientID}")
     public PatientResponse updatePatientByID(
             @PathVariable(name = "patientID") UUID patientID,
@@ -30,6 +31,7 @@ public class PatientController {
         return patientService.updatePatientByID(patientID, request);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (isAuthenticated() and #patientID == authentication.principal.id)")
     @DeleteMapping("/{patientID}")
     public String deletePatientByID(
             @PathVariable(name = "patientID") UUID patientID) {

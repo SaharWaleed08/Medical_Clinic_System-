@@ -11,7 +11,12 @@ import java.util.List;
 @Component
 public class DoctorMapper {
     public DoctorResponse toResponse(Doctor doctor) {
-        return new DoctorResponse(doctor.getId(), doctor.getName(),doctor.getEmail());
+        return new DoctorResponse(
+                doctor.getId(),
+                doctor.getName(),
+                doctor.getEmail(),
+                doctor.getSpecialization() != null ? doctor.getSpecialization().getName() : null
+        );
     }
 
     public List<DoctorResponse> toResponse(List<Doctor> doctors) {

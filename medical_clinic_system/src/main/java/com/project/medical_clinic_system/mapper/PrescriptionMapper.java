@@ -13,7 +13,7 @@ public class PrescriptionMapper {
     public PrescriptionResponse toResponse(Prescription prescription){
         return new PrescriptionResponse(
                 prescription.getId(),
-                prescription.getRecordID(),
+                prescription.getMedicalVisitRecord().getId(),
                 prescription.getMedicationName(),
                 prescription.getDosage(),
                 prescription.getFrequency(),

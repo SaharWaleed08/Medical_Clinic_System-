@@ -5,6 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import java.util.stream.Collectors;
 
 import java.time.LocalDateTime;
 
@@ -69,12 +75,12 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                HttpStatus.CONFLICT.value(),
                 exception.getMessage(),
                 request.getRequestURI()
         );
 
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(AppointmentConflictException.class)
@@ -101,6 +107,54 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            org.springframework.security.access.AccessDeniedException ex,
+            HttpServletRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(), HttpStatus.FORBIDDEN.value(),
+                "Access denied", request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    private ResponseEntity<ErrorResponse> buildError(HttpStatus status, String message, HttpServletRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                status.value(),
+                message,
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        return buildError(HttpStatus.BAD_REQUEST, message, request);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleUnreadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        return buildError(HttpStatus.BAD_REQUEST, "Malformed or unreadable request body", request);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        return buildError(HttpStatus.BAD_REQUEST, "Invalid value for parameter '" + ex.getName() + "'", request);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingParam(MissingServletRequestParameterException ex, HttpServletRequest request) {
+        return buildError(HttpStatus.BAD_REQUEST, "Missing parameter '" + ex.getParameterName() + "'", request);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
+        return buildError(HttpStatus.CONFLICT, "Request conflicts with existing data", request);
     }
 
     @ExceptionHandler(Exception.class)

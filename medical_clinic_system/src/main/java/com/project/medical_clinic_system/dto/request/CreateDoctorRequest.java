@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class CreateDoctorRequest {
     @NotBlank(message = "Name is required")
-    @Size(min = 10, max = 100)
+    @Size(min = 5, max = 100)
     private String name;
     @NotBlank(message = "Email is required")
     @Email(message = "invalid email")
@@ -34,15 +35,17 @@ public class CreateDoctorRequest {
             message = "License number must be in format 1234-5678"
     )
     private String licenseNumber;
-    @NotBlank(message = "Years of experience is required")
+    @NotNull(message = "Years of experience is required")
     @Positive
     private Integer yearsOfExperience;
-    @NotBlank
+    @NotNull
     @Positive
     private BigDecimal consultationFee;
+    @NotNull
+    private UUID specializationID;
 
 
-    public CreateDoctorRequest(String name, String email, String password, String phone, String licenseNumber, Integer yearsOfExperience, BigDecimal consultationFee) {
+    public CreateDoctorRequest(String name, String email, String password, String phone, String licenseNumber, Integer yearsOfExperience, BigDecimal consultationFee,UUID specializationID) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -50,6 +53,7 @@ public class CreateDoctorRequest {
         this.licenseNumber = licenseNumber;
         this.yearsOfExperience = yearsOfExperience;
         this.consultationFee = consultationFee;
+        this.specializationID=specializationID;
     }
 
 }

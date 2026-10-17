@@ -4,6 +4,7 @@ import com.project.medical_clinic_system.dto.request.CreatePrescriptionRequest;
 import com.project.medical_clinic_system.dto.response.PrescriptionResponse;
 import com.project.medical_clinic_system.service.PrescriptionService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -18,12 +19,14 @@ public class PrescriptionController {
         this.prescriptionService = prescriptionService;
     }
 
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PostMapping
     public PrescriptionResponse createPrescription(
             @Valid @RequestBody CreatePrescriptionRequest request) {
         return prescriptionService.createPrescription(request);
     }
 
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @DeleteMapping("/{prescriptionId}")
     public String deleteById(
             @PathVariable(name = "prescriptionId") UUID prescriptionID) {

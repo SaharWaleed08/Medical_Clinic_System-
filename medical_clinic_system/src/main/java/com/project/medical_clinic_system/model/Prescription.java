@@ -14,8 +14,9 @@ public class Prescription {
     @Id
     @GeneratedValue
     private UUID id;
-    @Column(name = "record_id", nullable = false)
-    private UUID recordID;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "record_id", nullable = false)
+    private MedicalVisitRecord medicalVisitRecord;
     @Column(name = "medication_name", nullable = false)
     private String medicationName;
     @Column(name = "dosage", nullable = false)
@@ -30,8 +31,8 @@ public class Prescription {
     public Prescription() {
     }
 
-    public Prescription(UUID recordID, String medicationName, Integer dosage, Integer frequency, Integer treatmentDuration, String additionalInstruction) {
-        this.recordID = recordID;
+    public Prescription(MedicalVisitRecord medicalVisitRecord, String medicationName, Integer dosage, Integer frequency, Integer treatmentDuration, String additionalInstruction) {
+        this.medicalVisitRecord = medicalVisitRecord;
         this.medicationName = medicationName;
         this.dosage = dosage;
         this.frequency = frequency;

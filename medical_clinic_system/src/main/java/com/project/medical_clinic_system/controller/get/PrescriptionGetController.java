@@ -2,6 +2,7 @@ package com.project.medical_clinic_system.controller.get;
 
 import com.project.medical_clinic_system.dto.response.PrescriptionResponse;
 import com.project.medical_clinic_system.service.PrescriptionService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,12 +18,14 @@ public class PrescriptionGetController {
         this.prescriptionService = prescriptionService;
     }
 
-    @GetMapping("/{prescriptionId}")
+    @PreAuthorize("@prescriptionRepository.findById(#prescriptionID).orElse(null)?.doctorID == authentication.principal.id")
+    @GetMapping("/{prescriptionID}")
     public PrescriptionResponse getById(
-            @PathVariable(name = "prescriptionId") UUID prescriptionID) {
+            @PathVariable(name = "prescriptionID") UUID prescriptionID) {
         return prescriptionService.findPrescriptionById(prescriptionID);
     }
 
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping
     public List<PrescriptionResponse> getAll() {
         return prescriptionService.findAll();
