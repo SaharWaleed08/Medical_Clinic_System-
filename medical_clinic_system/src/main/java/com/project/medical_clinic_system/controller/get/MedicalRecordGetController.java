@@ -4,6 +4,8 @@ import com.project.medical_clinic_system.dto.response.MedicalRecordResponse;
 import com.project.medical_clinic_system.service.MedicalRecordService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.project.medical_clinic_system.model.User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,7 +29,7 @@ public class MedicalRecordGetController {
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping
-    public List<MedicalRecordResponse> getAll() {
-        return medicalRecordService.findAll();
+    public List<MedicalRecordResponse> getAll(@AuthenticationPrincipal User doctor) {
+        return medicalRecordService.findByDoctorID(doctor.getId());
     }
 }

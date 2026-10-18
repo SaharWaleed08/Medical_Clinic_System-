@@ -4,6 +4,8 @@ import com.project.medical_clinic_system.dto.response.PrescriptionResponse;
 import com.project.medical_clinic_system.service.PrescriptionService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.project.medical_clinic_system.model.User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +20,7 @@ public class PrescriptionGetController {
         this.prescriptionService = prescriptionService;
     }
 
-    @PreAuthorize("@prescriptionRepository.findById(#prescriptionID).orElse(null)?.doctorID == authentication.principal.id")
+    @PreAuthorize("@prescriptionRepository.findById(#prescriptionID).orElse(null)?.medicalVisitRecord?.doctorId == authentication.principal.id or @medicalRecordRepository.findById(#medicalRecordId).orElse(null)?.medicalVisitRecord?.patientId == authentication.principal.id ")
     @GetMapping("/{prescriptionID}")
     public PrescriptionResponse getById(
             @PathVariable(name = "prescriptionID") UUID prescriptionID) {
@@ -27,7 +29,7 @@ public class PrescriptionGetController {
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping
-    public List<PrescriptionResponse> getAll() {
-        return prescriptionService.findAll();
+    public List<PrescriptionResponse> getAll(@AuthenticationPrincipal User doctor) {
+        return prescriptionService.findByDoctorID(doctor.getId());
     }
 }

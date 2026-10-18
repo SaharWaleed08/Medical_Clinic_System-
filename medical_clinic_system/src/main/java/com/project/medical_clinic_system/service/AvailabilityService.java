@@ -32,13 +32,12 @@ public class AvailabilityService {
     }
 
     public AvailabilityResponse createAvailability(CreateAvailabilityRequest request) {
-        Optional<Doctor> doctor = doctorRepository.findById(request.getDoctorID());
-        if (doctor.isEmpty()) {
-            throw new ResourceNotFoundException("Doctor not found");
-        }
+        Doctor doctor = doctorRepository.findById(request.getDoctorID())
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+
 
         Availability availability = new Availability(
-                doctor.get(),
+                doctor,
                 request.getDay(),
                 request.getStartTime(),
                 request.getEndTime()

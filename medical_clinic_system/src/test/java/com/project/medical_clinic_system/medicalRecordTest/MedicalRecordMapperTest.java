@@ -30,6 +30,7 @@ class MedicalRecordMapperTest {
 
         assertEquals(r.getId(), res.getMedicalRecordID());
         assertEquals(r.getPatientID(), res.getPatientID());
+        assertEquals(r.getAppointmentID(), res.getAppointmentID());
         assertEquals("Flu", res.getDiagnosis());
         assertEquals("notes-Flu", res.getMedicalNotes());
     }

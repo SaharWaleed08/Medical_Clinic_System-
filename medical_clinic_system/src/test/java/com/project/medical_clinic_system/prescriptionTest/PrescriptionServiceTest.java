@@ -10,6 +10,7 @@ import com.project.medical_clinic_system.repository.MedicalRecordRepository;
 import com.project.medical_clinic_system.repository.PrescriptionRepository;
 import com.project.medical_clinic_system.service.PrescriptionService;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.access.AccessDeniedException;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -39,7 +40,11 @@ class PrescriptionServiceTest {
     private PrescriptionService prescriptionService;
 
     private MedicalVisitRecord record(UUID id) {
-        MedicalVisitRecord r = new MedicalVisitRecord(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
+        return record(id, UUID.randomUUID());
+    }
+
+    private MedicalVisitRecord record(UUID id, UUID doctorId) {
+        MedicalVisitRecord r = new MedicalVisitRecord(UUID.randomUUID(), doctorId, UUID.randomUUID(),
                 "Flu", "Rest", LocalDate.of(2026, 5, 5));
         r.setId(id);
         return r;
@@ -54,13 +59,14 @@ class PrescriptionServiceTest {
     @Test
     void createPrescription_success_linksPrescriptionToMedicalRecord() {
         UUID recordId = UUID.randomUUID();
-        MedicalVisitRecord record = record(recordId);
+        UUID doctorId = UUID.randomUUID();
+        MedicalVisitRecord record = record(recordId, doctorId);
         CreatePrescriptionRequest request = new CreatePrescriptionRequest(recordId, "Panadol", 500, 3, 5, "After meals");
         PrescriptionResponse expected = response(recordId);
         when(medicalRecordRepository.findById(recordId)).thenReturn(Optional.of(record));
         when(prescriptionMapper.toResponse(any(Prescription.class))).thenReturn(expected);
 
-        PrescriptionResponse result = prescriptionService.createPrescription(request);
+        PrescriptionResponse result = prescriptionService.createPrescription(request, doctorId);
 
         ArgumentCaptor<Prescription> captor = ArgumentCaptor.forClass(Prescription.class);
         verify(prescriptionRepository).save(captor.capture());
@@ -82,10 +88,26 @@ class PrescriptionServiceTest {
         when(medicalRecordRepository.findById(recordId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
-                () -> prescriptionService.createPrescription(request));
+                () -> prescriptionService.createPrescription(request, UUID.randomUUID()));
 
         assertEquals("Medical record not found", ex.getMessage());
         verify(prescriptionRepository, never()).save(any());
+    }
+
+    @Test
+    void createPrescription_recordBelongsToAnotherDoctor_throwsAccessDenied() {
+        UUID recordId = UUID.randomUUID();
+        UUID ownerDoctorId = UUID.randomUUID();
+        UUID callerDoctorId = UUID.randomUUID();
+        CreatePrescriptionRequest request = new CreatePrescriptionRequest(recordId, "Panadol", 500, 3, 5, "After meals");
+        when(medicalRecordRepository.findById(recordId)).thenReturn(Optional.of(record(recordId, ownerDoctorId)));
+
+        AccessDeniedException ex = assertThrows(AccessDeniedException.class,
+                () -> prescriptionService.createPrescription(request, callerDoctorId));
+
+        assertEquals("This record does not belong to you", ex.getMessage());
+        verify(prescriptionRepository, never()).save(any());
+        verifyNoInteractions(prescriptionMapper);
     }
 
     // ---------- find / delete ----------
@@ -127,5 +149,29 @@ class PrescriptionServiceTest {
 
         assertEquals("Prescription is deleted", prescriptionService.deletePrescriptionById(id));
         verify(prescriptionRepository).deleteById(id);
+    }
+
+    @Test
+    void findByPatientID_returnsMappedPrescriptionsOfThatPatient() {
+        UUID patientId = UUID.randomUUID();
+        List<Prescription> entities = List.of(new Prescription(record(UUID.randomUUID()), "A", 1, 1, 1, "x"));
+        List<PrescriptionResponse> expected = List.of(response(UUID.randomUUID()));
+        when(prescriptionRepository.findByMedicalVisitRecord_PatientID(patientId)).thenReturn(entities);
+        when(prescriptionMapper.toResponse(entities)).thenReturn(expected);
+
+        assertSame(expected, prescriptionService.findByPatientID(patientId));
+        verify(prescriptionRepository, never()).findAll();
+    }
+
+    @Test
+    void findByDoctorID_returnsMappedPrescriptionsOfThatDoctor() {
+        UUID doctorId = UUID.randomUUID();
+        List<Prescription> entities = List.of(new Prescription(record(UUID.randomUUID()), "A", 1, 1, 1, "x"));
+        List<PrescriptionResponse> expected = List.of(response(UUID.randomUUID()));
+        when(prescriptionRepository.findByMedicalVisitRecord_DoctorID(doctorId)).thenReturn(entities);
+        when(prescriptionMapper.toResponse(entities)).thenReturn(expected);
+
+        assertSame(expected, prescriptionService.findByDoctorID(doctorId));
+        verify(prescriptionRepository, never()).findAll();
     }
 }

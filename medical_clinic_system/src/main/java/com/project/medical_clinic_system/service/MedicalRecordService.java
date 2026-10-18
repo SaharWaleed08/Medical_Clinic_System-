@@ -56,6 +56,14 @@ public class MedicalRecordService {
         List<MedicalVisitRecord> medicalVisitRecords=medicalRecordRepository.findAll();
         return medicalRecordMapper.toResponse(medicalVisitRecords);
     }
+    public List<MedicalRecordResponse> findByPatientID(UUID patientID) {
+        return medicalRecordMapper.toResponse(medicalRecordRepository.findByPatientID(patientID));
+    }
+
+    public List<MedicalRecordResponse> findByDoctorID(UUID doctorID) {
+        return medicalRecordMapper.toResponse(medicalRecordRepository.findByDoctorID(doctorID));
+    }
+
     public String deleteMedicalRecordById(UUID medicalRecordID){
         medicalRecordRepository.deleteById(medicalRecordID);
         return "Medical Record is deleted";

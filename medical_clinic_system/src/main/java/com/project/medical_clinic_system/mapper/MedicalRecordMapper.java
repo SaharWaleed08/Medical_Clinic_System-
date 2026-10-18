@@ -14,6 +14,7 @@ public class MedicalRecordMapper {
         return new MedicalRecordResponse(
                 medicalVisitRecord.getId(),
                 medicalVisitRecord.getPatientID(),
+                medicalVisitRecord.getAppointmentID(),
                 medicalVisitRecord.getDiagnosis(),
                 medicalVisitRecord.getMedicalNotes());
     }

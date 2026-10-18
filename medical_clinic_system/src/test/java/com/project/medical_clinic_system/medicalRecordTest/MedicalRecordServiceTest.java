@@ -69,7 +69,7 @@ class MedicalRecordServiceTest {
         UUID appointmentId = UUID.randomUUID();
         LocalDate date = LocalDate.of(2026, 5, 5);
         CreateMedicalRecordRequest request = new CreateMedicalRecordRequest(appointmentId, "Flu", "Rest and fluids", date);
-        MedicalRecordResponse expected = new MedicalRecordResponse(UUID.randomUUID(), patientId, "Flu", "Rest and fluids");
+        MedicalRecordResponse expected = new MedicalRecordResponse(UUID.randomUUID(), patientId, appointmentId, "Flu", "Rest and fluids");
         when(appointmentRepository.findById(appointmentId))
                 .thenReturn(Optional.of(appointmentOf(doctorId, patientId, appointmentId)));
         when(medicalRecordMapper.toResponse(any(MedicalVisitRecord.class))).thenReturn(expected);
@@ -125,7 +125,7 @@ class MedicalRecordServiceTest {
     void findById_found_returnsResponse() {
         UUID id = UUID.randomUUID();
         MedicalVisitRecord record = record();
-        MedicalRecordResponse expected = new MedicalRecordResponse(id, record.getPatientID(), "Flu", "Rest and fluids");
+        MedicalRecordResponse expected = new MedicalRecordResponse(id, record.getPatientID(), record.getAppointmentID(), "Flu", "Rest and fluids");
         when(medicalRecordRepository.findById(id)).thenReturn(Optional.of(record));
         when(medicalRecordMapper.toResponse(record)).thenReturn(expected);
 
@@ -146,8 +146,8 @@ class MedicalRecordServiceTest {
     void findAll_returnsMappedList() {
         List<MedicalVisitRecord> entities = List.of(record(), record());
         List<MedicalRecordResponse> expected = List.of(
-                new MedicalRecordResponse(UUID.randomUUID(), UUID.randomUUID(), "a", "b"),
-                new MedicalRecordResponse(UUID.randomUUID(), UUID.randomUUID(), "c", "d"));
+                new MedicalRecordResponse(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "a", "b"),
+                new MedicalRecordResponse(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "c", "d"));
         when(medicalRecordRepository.findAll()).thenReturn(entities);
         when(medicalRecordMapper.toResponse(entities)).thenReturn(expected);
 
@@ -160,5 +160,38 @@ class MedicalRecordServiceTest {
 
         assertEquals("Medical Record is deleted", medicalRecordService.deleteMedicalRecordById(id));
         verify(medicalRecordRepository).deleteById(id);
+    }
+
+    @Test
+    void findByPatientID_returnsOnlyThatPatientsRecordsMapped() {
+        UUID patientId = UUID.randomUUID();
+        List<MedicalVisitRecord> entities = List.of(record());
+        List<MedicalRecordResponse> expected = List.of(mock(MedicalRecordResponse.class));
+        when(medicalRecordRepository.findByPatientID(patientId)).thenReturn(entities);
+        when(medicalRecordMapper.toResponse(entities)).thenReturn(expected);
+
+        assertSame(expected, medicalRecordService.findByPatientID(patientId));
+        verify(medicalRecordRepository, never()).findAll();
+    }
+
+    @Test
+    void findByDoctorID_returnsOnlyThatDoctorsRecordsMapped() {
+        UUID doctorId = UUID.randomUUID();
+        List<MedicalVisitRecord> entities = List.of(record(), record());
+        List<MedicalRecordResponse> expected = List.of(mock(MedicalRecordResponse.class), mock(MedicalRecordResponse.class));
+        when(medicalRecordRepository.findByDoctorID(doctorId)).thenReturn(entities);
+        when(medicalRecordMapper.toResponse(entities)).thenReturn(expected);
+
+        assertSame(expected, medicalRecordService.findByDoctorID(doctorId));
+        verify(medicalRecordRepository, never()).findAll();
+    }
+
+    @Test
+    void findByPatientID_noRecords_returnsEmptyList() {
+        UUID patientId = UUID.randomUUID();
+        when(medicalRecordRepository.findByPatientID(patientId)).thenReturn(List.of());
+        when(medicalRecordMapper.toResponse(List.<MedicalVisitRecord>of())).thenReturn(List.of());
+
+        assertTrue(medicalRecordService.findByPatientID(patientId).isEmpty());
     }
 }

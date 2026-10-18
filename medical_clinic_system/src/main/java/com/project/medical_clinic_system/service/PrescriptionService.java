@@ -27,9 +27,12 @@ public class PrescriptionService {
         this.prescriptionMapper = prescriptionMapper;
     }
 
-    public PrescriptionResponse createPrescription(CreatePrescriptionRequest request) {
-        MedicalVisitRecord medicalVisitRecord=medicalRecordRepository.findById(request.getRecordID())
-                .orElseThrow(()->new ResourceNotFoundException("Medical record not found"));
+    public PrescriptionResponse createPrescription(CreatePrescriptionRequest request, UUID doctorID) {
+        MedicalVisitRecord medicalVisitRecord = medicalRecordRepository.findById(request.getRecordID())
+                .orElseThrow(() -> new ResourceNotFoundException("Medical record not found"));
+        if (!medicalVisitRecord.getDoctorID().equals(doctorID)) {
+            throw new org.springframework.security.access.AccessDeniedException("This record does not belong to you");
+        }
         Prescription prescription = new Prescription(medicalVisitRecord, request.getMedicationName(), request.getDosage(), request.getFrequency(), request.getTreatmentDuration(), request.getAdditionalInstruction());
         prescriptionRepository.save(prescription);
         return prescriptionMapper.toResponse(prescription);
@@ -44,6 +47,14 @@ public class PrescriptionService {
     public List<PrescriptionResponse> findAll() {
         List<Prescription> prescriptions = prescriptionRepository.findAll();
         return prescriptionMapper.toResponse(prescriptions);
+    }
+
+    public List<PrescriptionResponse> findByPatientID(UUID patientID) {
+        return prescriptionMapper.toResponse(prescriptionRepository.findByMedicalVisitRecord_PatientID(patientID));
+    }
+
+    public List<PrescriptionResponse> findByDoctorID(UUID doctorID) {
+        return prescriptionMapper.toResponse(prescriptionRepository.findByMedicalVisitRecord_DoctorID(doctorID));
     }
 
     public String deletePrescriptionById(UUID prescriptionID) {

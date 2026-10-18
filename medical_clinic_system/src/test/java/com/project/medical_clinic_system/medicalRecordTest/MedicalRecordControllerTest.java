@@ -67,10 +67,13 @@ class MedicalRecordControllerTest {
     }
 
     @Test
-    void getAll_delegatesToService() {
+    void getAll_returnsOnlyTheAuthenticatedDoctorsRecords() {
+        User doctor = new Admin("Doctor One", "d@mail.com", "pw", "01012345678");
+        UUID doctorId = UUID.randomUUID();
+        doctor.setId(doctorId);
         List<MedicalRecordResponse> expected = List.of(mock(MedicalRecordResponse.class));
-        when(medicalRecordService.findAll()).thenReturn(expected);
+        when(medicalRecordService.findByDoctorID(doctorId)).thenReturn(expected);
 
-        assertSame(expected, getController.getAll());
+        assertSame(expected, getController.getAll(doctor));
     }
 }

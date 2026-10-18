@@ -10,14 +10,15 @@ import java.util.UUID;
 public class MedicalRecordResponse {
     private UUID medicalRecordID;
     private UUID patientID;
+    private UUID appointmentID;
     private String diagnosis;
     private String medicalNotes;
 
-    public MedicalRecordResponse(UUID medicalRecordID, UUID patientID, String diagnosis, String medicalNotes) {
+    public MedicalRecordResponse(UUID medicalRecordID, UUID patientID, UUID appointmentID, String diagnosis, String medicalNotes) {
         this.medicalRecordID = medicalRecordID;
         this.patientID = patientID;
+        this.appointmentID = appointmentID;
         this.diagnosis = diagnosis;
         this.medicalNotes = medicalNotes;
     }
-
 }

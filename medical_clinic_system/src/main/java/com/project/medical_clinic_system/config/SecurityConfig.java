@@ -57,6 +57,7 @@ public class SecurityConfig {
 
                         // Medical records & prescriptions (writes = DOCTOR)
                         .requestMatchers("/api/medical-record/**", "/api/prescription/**").hasRole("DOCTOR")
+                        .requestMatchers(HttpMethod.GET,"/api/medical-record/**", "/api/prescription/**").hasAnyRole("DOCTOR","PATIENT")
 
                         // Availability (writes = DOCTOR or ADMIN, ownership checked by @PreAuthorize)
                         .requestMatchers("/api/availability/**").hasAnyRole("DOCTOR", "ADMIN")

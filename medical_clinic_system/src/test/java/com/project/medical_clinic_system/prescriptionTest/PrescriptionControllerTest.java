@@ -4,6 +4,8 @@ import com.project.medical_clinic_system.controller.PrescriptionController;
 import com.project.medical_clinic_system.controller.get.PrescriptionGetController;
 import com.project.medical_clinic_system.dto.request.CreatePrescriptionRequest;
 import com.project.medical_clinic_system.dto.response.PrescriptionResponse;
+import com.project.medical_clinic_system.model.Admin;
+import com.project.medical_clinic_system.model.User;
 import com.project.medical_clinic_system.service.PrescriptionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,13 +37,20 @@ class PrescriptionControllerTest {
         getController = new PrescriptionGetController(prescriptionService);
     }
 
+    private User doctorUser(UUID id) {
+        User doctor = new Admin("Doctor One", "d@mail.com", "pw", "01012345678");
+        doctor.setId(id);
+        return doctor;
+    }
+
     @Test
-    void createPrescription_delegatesToService() {
+    void createPrescription_passesAuthenticatedDoctorIdToService() {
         CreatePrescriptionRequest request = mock(CreatePrescriptionRequest.class);
         PrescriptionResponse expected = mock(PrescriptionResponse.class);
-        when(prescriptionService.createPrescription(request)).thenReturn(expected);
+        UUID doctorId = UUID.randomUUID();
+        when(prescriptionService.createPrescription(request, doctorId)).thenReturn(expected);
 
-        assertSame(expected, controller.createPrescription(request));
+        assertSame(expected, controller.createPrescription(request, doctorUser(doctorId)));
     }
 
     @Test
@@ -62,10 +71,11 @@ class PrescriptionControllerTest {
     }
 
     @Test
-    void getAll_delegatesToService() {
+    void getAll_returnsOnlyTheAuthenticatedDoctorsPrescriptions() {
+        UUID doctorId = UUID.randomUUID();
         List<PrescriptionResponse> expected = List.of(mock(PrescriptionResponse.class));
-        when(prescriptionService.findAll()).thenReturn(expected);
+        when(prescriptionService.findByDoctorID(doctorId)).thenReturn(expected);
 
-        assertSame(expected, getController.getAll());
+        assertSame(expected, getController.getAll(doctorUser(doctorId)));
     }
 }
