@@ -8,11 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/appointments")
@@ -25,58 +27,33 @@ public class AppointmentGetController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/?status=}")
-    public Page<AppointmentResponse> getAppointmentsByStatus(
+    @GetMapping
+    public Page<AppointmentResponse> getAppointments(
             @RequestParam(required = false) AppointmentStatus status,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "status") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction) {
+            @RequestParam(defaultValue = "appointmentDateTime") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
 
-        Sort sort = direction.equalsIgnoreCase("asc")
-                ? Sort.by(Sort.Direction.ASC, sortBy)
-                : Sort.by(Sort.Direction.DESC, sortBy);
         if (size > 10 || size <= 0) {
             throw new InvalidDataException("Max size");
         }
-        if (page < 0){
+        if (page < 0) {
             throw new InvalidDataException("Invalid page");
         }
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        return appointmentService.findAppointmentsByStatus(status, pageable);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/?start=&end=")
-    public Page<AppointmentResponse> getAppointmentsBySDate(
-            @RequestParam(required = false) LocalDateTime start,
-            @RequestParam(required = false) LocalDateTime end,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "status") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction) {
-
         Sort sort = direction.equalsIgnoreCase("asc")
                 ? Sort.by(Sort.Direction.ASC, sortBy)
                 : Sort.by(Sort.Direction.DESC, sortBy);
-        if (size > 10 || size <= 0) {
-            throw new InvalidDataException("Max size");
-        }
-        if (page < 0){
-            throw new InvalidDataException("Invalid page");
-        }
-
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return appointmentService.findAppointmentsByDate(start,end, pageable);
+        return appointmentService.findAppointments(status, start, end, pageable);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}")
-    public AppointmentResponse findAppointmentByID(
-            @PathVariable(name = "id") UUID id) {
-
+    public AppointmentResponse findAppointmentByID(@PathVariable(name = "id") UUID id) {
         return appointmentService.findAppointmentByID(id);
     }
 }

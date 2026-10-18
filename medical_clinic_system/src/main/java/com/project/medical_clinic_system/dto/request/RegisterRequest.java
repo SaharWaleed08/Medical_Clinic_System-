@@ -53,7 +53,7 @@ public record RegisterRequest(
         @Positive(message = "Consultation fee must be greater than 0")
         BigDecimal consultationFee,
 
-        @NotNull
+        
         UUID specializationID,
 
         //Admin fields

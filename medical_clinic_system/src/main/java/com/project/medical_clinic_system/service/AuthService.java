@@ -39,8 +39,9 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidDataException("invalid email or password");
         }
+
         String token = jwtService.generateToken(user);
-        return new LoginResponse(token);
+        return new LoginResponse(user.getId(),user.getName(),user.getRole(),token);
     }
 
     public Object registerUser(RegisterRequest request) {

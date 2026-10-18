@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -32,12 +33,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .authorizeHttpRequests(auth -> auth
 
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Public
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
 
@@ -50,6 +53,7 @@ public class SecurityConfig {
 
                         // Specialization (SpecializationController): writes = ADMIN
                         .requestMatchers("/api/specialization/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/specializations").permitAll()
 
                         // Medical records & prescriptions (writes = DOCTOR)
                         .requestMatchers("/api/medical-record/**", "/api/prescription/**").hasRole("DOCTOR")

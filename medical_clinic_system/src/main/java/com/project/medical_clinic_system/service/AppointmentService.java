@@ -121,25 +121,23 @@ public class AppointmentService {
         return appointments.map(appointmentMapper::toResponse);
     }
 
-    public Page<AppointmentResponse> findAppointmentsByStatus(AppointmentStatus status, Pageable pageable) {
-
-        Page<Appointment> appointments =
-                appointmentRepository.findByStatus(status, pageable);
-
-        return appointments.map(appointmentMapper::toResponse);
+    public Page<AppointmentResponse> findAppointments(AppointmentStatus status,
+                                                      LocalDateTime start,
+                                                      LocalDateTime end,
+                                                      Pageable pageable) {
+        boolean hasDates = start != null && end != null;
+        Page<Appointment> result;
+        if (status != null && hasDates) {
+            result = appointmentRepository.findByStatusAndAppointmentDateTimeBetween(status, start, end, pageable);
+        } else if (status != null) {
+            result = appointmentRepository.findByStatus(status, pageable);
+        } else if (hasDates) {
+            result = appointmentRepository.findByAppointmentDateTimeBetween(start, end, pageable);
+        } else {
+            result = appointmentRepository.findAll(pageable);
+        }
+        return result.map(appointmentMapper::toResponse);
     }
-
-    public Page<AppointmentResponse> findAppointmentsByDate(
-            LocalDateTime start,
-            LocalDateTime end,
-            Pageable pageable) {
-
-        Page<Appointment> appointments =
-                appointmentRepository.findByAppointmentDateTimeBetween(start, end, pageable);
-
-        return appointments.map(appointmentMapper::toResponse);
-    }
-
     public AppointmentResponse confirmAppointment(UUID id) {
 
         Appointment appointment = appointmentRepository.findById(id)

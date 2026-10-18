@@ -18,6 +18,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
             LocalDateTime appointmentDateTime,
             AppointmentStatus status
     );
+    Page<Appointment> findByStatusAndAppointmentDateTimeBetween(
+            AppointmentStatus status,
+            LocalDateTime start,
+            LocalDateTime end,
+            Pageable pageable
+    );
 
     Page<Appointment> findByPatientId(UUID patientId,Pageable pageable);
 
