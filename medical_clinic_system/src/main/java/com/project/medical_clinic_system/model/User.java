@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Setter
@@ -32,6 +33,12 @@ public abstract class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     protected Role role;
+
+    @Column(name = "active_session_id")
+    private String activeSessionId;
+
+    @Column(name = "active_session_expires_at")
+    private Instant activeSessionExpiresAt;
 
     public User() {
 

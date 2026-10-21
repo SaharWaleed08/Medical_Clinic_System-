@@ -3,8 +3,11 @@ package com.project.medical_clinic_system.controller;
 import com.project.medical_clinic_system.dto.request.LoginRequest;
 import com.project.medical_clinic_system.dto.request.RegisterRequest;
 import com.project.medical_clinic_system.dto.response.LoginResponse;
+import com.project.medical_clinic_system.model.User;
 import com.project.medical_clinic_system.service.AuthService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +30,15 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest request){
         return authService.loginUser(request);
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+
+        authService.logout(user.getEmail());
+
+        return ResponseEntity.noContent().build();
     }
 
 }
