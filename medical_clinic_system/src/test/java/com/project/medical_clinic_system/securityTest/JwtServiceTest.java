@@ -48,7 +48,7 @@ class JwtServiceTest {
 
     @Test
     void generateToken_returnsThreePartJwt() {
-        String token = jwtService.generateToken(admin);
+        String token = jwtService.generateToken(admin, "session-1");
 
         assertNotNull(token);
         assertEquals(3, token.split("\\.").length);
@@ -56,7 +56,7 @@ class JwtServiceTest {
 
     @Test
     void generateToken_containsIssuerSubjectAndRole() {
-        Claims claims = jwtService.extractClaims(jwtService.generateToken(admin));
+        Claims claims = jwtService.extractClaims(jwtService.generateToken(admin, "session-1"));
 
         assertEquals("medical-clinic-system", claims.getIssuer());
         assertEquals("root@mail.com", claims.getSubject());
@@ -64,11 +64,26 @@ class JwtServiceTest {
     }
 
     @Test
+    void generateToken_containsSessionIdClaim() {
+        Claims claims = jwtService.extractClaims(jwtService.generateToken(admin, "session-xyz"));
+
+        assertEquals("session-xyz", claims.get("sid", String.class));
+    }
+
+    @Test
+    void generateToken_differentSessionIds_produceDifferentTokens() {
+        String first = jwtService.generateToken(admin, "session-1");
+        String second = jwtService.generateToken(admin, "session-2");
+
+        assertNotEquals(first, second);
+    }
+
+    @Test
     void generateToken_roleClaimFollowsUserRole() {
         User doctor = new Doctor("Doc", "doc@mail.com", "pw", "01012345678",
                 new Specialization("Cardiology", "Heart"), "1234-5678", 5, BigDecimal.TEN);
 
-        Claims claims = jwtService.extractClaims(jwtService.generateToken(doctor));
+        Claims claims = jwtService.extractClaims(jwtService.generateToken(doctor, "session-1"));
 
         assertEquals(Role.DOCTOR.name(), claims.get("role", String.class));
     }
@@ -77,7 +92,7 @@ class JwtServiceTest {
     void generateToken_usesConfiguredExpiration() {
         JwtService shortLived = new JwtService(SECRET, 5 * 60 * 1000L);
 
-        Claims claims = shortLived.extractClaims(shortLived.generateToken(admin));
+        Claims claims = shortLived.extractClaims(shortLived.generateToken(admin, "session-1"));
         long lifetime = claims.getExpiration().getTime() - claims.getIssuedAt().getTime();
 
         // JWT dates have second precision -> allow 2s tolerance
@@ -88,7 +103,7 @@ class JwtServiceTest {
 
     @Test
     void isTokenValid_freshToken_isTrue() {
-        assertTrue(jwtService.isTokenValid(jwtService.generateToken(admin)));
+        assertTrue(jwtService.isTokenValid(jwtService.generateToken(admin, "session-1")));
     }
 
     @Test
@@ -103,7 +118,7 @@ class JwtServiceTest {
 
     @Test
     void isTokenValid_tamperedPayload_isFalse() {
-        String[] parts = jwtService.generateToken(admin).split("\\.");
+        String[] parts = jwtService.generateToken(admin, "session-1").split("\\.");
         String fakePayload = Base64.getUrlEncoder().withoutPadding()
                 .encodeToString("{\"sub\":\"hacker@mail.com\",\"role\":\"ADMIN\"}".getBytes(StandardCharsets.UTF_8));
 
@@ -112,7 +127,7 @@ class JwtServiceTest {
 
     @Test
     void isTokenValid_tokenSignedWithAnotherSecret_isFalse() {
-        String foreignToken = new JwtService(OTHER_SECRET, ONE_HOUR).generateToken(admin);
+        String foreignToken = new JwtService(OTHER_SECRET, ONE_HOUR).generateToken(admin, "session-1");
 
         assertFalse(jwtService.isTokenValid(foreignToken));
     }
@@ -121,7 +136,7 @@ class JwtServiceTest {
     void isTokenValid_expiredToken_isFalse() {
         JwtService alreadyExpired = new JwtService(SECRET, -1000L);
 
-        assertFalse(jwtService.isTokenValid(alreadyExpired.generateToken(admin)));
+        assertFalse(jwtService.isTokenValid(alreadyExpired.generateToken(admin, "session-1")));
     }
 
     @Test
@@ -154,7 +169,7 @@ class JwtServiceTest {
 
     @Test
     void tryExtractClaims_validToken_returnsClaims() {
-        Optional<Claims> claims = jwtService.tryExtractClaims(jwtService.generateToken(admin));
+        Optional<Claims> claims = jwtService.tryExtractClaims(jwtService.generateToken(admin, "session-1"));
 
         assertTrue(claims.isPresent());
         assertEquals("root@mail.com", claims.get().getSubject());
@@ -167,7 +182,7 @@ class JwtServiceTest {
 
     @Test
     void tryExtractClaims_expiredToken_returnsEmpty() {
-        String expired = new JwtService(SECRET, -1000L).generateToken(admin);
+        String expired = new JwtService(SECRET, -1000L).generateToken(admin, "session-1");
 
         assertTrue(jwtService.tryExtractClaims(expired).isEmpty());
     }

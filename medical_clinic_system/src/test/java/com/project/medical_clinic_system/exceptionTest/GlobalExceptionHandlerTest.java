@@ -98,6 +98,13 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    void handleActiveSession_returns409() {
+        assertResponse(handler.handleActiveSession(
+                        new ActiveSessionException("This account is already logged in"), request),
+                HttpStatus.CONFLICT, "This account is already logged in");
+    }
+
+    @Test
     void handleAccessDenied_returns403() {
         assertResponse(handler.handleAccessDenied(new AccessDeniedException("nope"), request),
                 HttpStatus.FORBIDDEN, "Access denied");
