@@ -21,18 +21,25 @@ public class JwtService {
     private final SecretKey secretKey;
     private final long expirationMs;
 
-    public JwtService(@Value("${jwt.secret}") String base64Secret,
-                      @Value("${jwt.expiration-ms:3600000}") long expirationMs) {
-        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(base64Secret));
+    public JwtService(
+            @Value("${security.jwt.secret}") String base64Secret,
+            @Value("${security.jwt.expiration-ms:900000}") long expirationMs) {
+
+        this.secretKey = Keys.hmacShaKeyFor(
+                Decoders.BASE64.decode(base64Secret)
+        );
+
         this.expirationMs = expirationMs;
     }
 
-    public String generateToken(User user) {
+    public String generateToken(User user, String sessionId) {
         Date now = new Date();
+
         return Jwts.builder()
                 .issuer(ISSUER_NAME)
                 .subject(user.getEmail())
                 .claim("role", user.getRole().name())
+                .claim("sid", sessionId)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + expirationMs))
                 .signWith(secretKey)

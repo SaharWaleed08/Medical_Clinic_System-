@@ -36,24 +36,44 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            jwtService.tryExtractClaims(header.substring(7)).ifPresent(claims -> {
-                String email = claims.getSubject();
-                String tokenRole = claims.get("role", String.class);
+            jwtService.tryExtractClaims(header.substring(7))
+                    .ifPresent(claims -> {
 
-                if (email != null && tokenRole != null) {
-                    userRepository.findByEmail(email)
-                            .filter(u -> u.getRole() != null
-                                    && u.getRole().name().equals(tokenRole))
-                            .ifPresent(user -> {
-                                var authentication = new UsernamePasswordAuthenticationToken(
-                                        user,
-                                        null,
-                                        List.of(new SimpleGrantedAuthority(
-                                                "ROLE_" + user.getRole().name())));
-                                SecurityContextHolder.getContext().setAuthentication(authentication);
-                            });
-                }
-            });
+                        String email = claims.getSubject();
+                        String tokenRole = claims.get("role", String.class);
+                        String sessionId = claims.get("sid", String.class);
+
+                        if (email == null
+                                || tokenRole == null
+                                || sessionId == null) {
+                            return;
+                        }
+
+                        userRepository.findByEmail(email)
+                                .filter(user ->
+                                        user.getRole() != null
+                                                && user.getRole().name().equals(tokenRole))
+                                .filter(user ->
+                                        sessionId.equals(user.getActiveSessionId()))
+                                .filter(user ->
+                                        user.getActiveSessionExpiresAt() != null
+                                                && user.getActiveSessionExpiresAt()
+                                                .isAfter(java.time.Instant.now()))
+                                .ifPresent(user -> {
+
+                                    var authentication =
+                                            new UsernamePasswordAuthenticationToken(
+                                                    user,
+                                                    null,
+                                                    List.of(new SimpleGrantedAuthority(
+                                                            "ROLE_" + user.getRole().name()
+                                                    ))
+                                            );
+
+                                    SecurityContextHolder.getContext()
+                                            .setAuthentication(authentication);
+                                });
+                    });
         }
 
         chain.doFilter(request, response);
